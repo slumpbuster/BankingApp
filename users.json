@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "name": "abel",
+      "email": "abel@mit.edu",
+      "password": "secret",
+      "balance": 100
+    },
+    {
+      "name": "test",
+      "email": "test@test.com",
+      "password": "secret",
+      "balance": 50
+    }
+  ]
+}
