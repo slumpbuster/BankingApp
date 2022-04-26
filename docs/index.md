@@ -51,6 +51,7 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 - 2022-04-24: Added forms for Login, Withdraw, and Deposit
 - 2022-04-24: Added enhaced error validataion
 - 2022-04-24: Refactored to have brunt of logic in Context.js and not in individual pages
+- 2022-04-25: Added autofocus on forms
 
 ## Roadmap of Future Improvements
 

@@ -127,7 +127,7 @@ const Form = (props) => {
         return (
           <>
             Email address<br/>
-            <input type="input" className="form-control" name="email" placeholder="Enter email"/><br/>
+            <input type="input" className="form-control" name="email" placeholder="Enter email" autoFocus/><br/>
             Password<br/>
             <input type="password" className="form-control" name="password" placeholder="Enter password"/><br/>
           </>
@@ -137,7 +137,7 @@ const Form = (props) => {
           return (
             <>
               Name<br/>
-              <input type="input" className="form-control" name="name" placeholder="Enter name"/><br/>
+              <input type="input" className="form-control" name="name" placeholder="Enter name" autoFocus/><br/>
               Email address<br/>
               <input type="input" className="form-control" name="email" placeholder="Enter email"/><br/>
               Password<br/>
@@ -152,7 +152,7 @@ const Form = (props) => {
             <h4>{ctxUser.name}</h4>
             <h4>Balance ${ctxUser.balance}</h4>
             Deposit Amount<br/>
-            <input type="number" min="0" className="form-control" name="transaction" placeholder="Deposit Amount"/><br/>
+            <input type="number" min="0" className="form-control" name="transaction" placeholder="Deposit Amount" autoFocus/><br/>
             <input type="hidden" className="form-control" name="balance" value={ctxUser.balance}/>
             <input type="hidden" className="form-control" name="email" value={ctxUser.email}/>
           </>
@@ -164,7 +164,7 @@ const Form = (props) => {
             <h4>{ctxUser.name}</h4>
             <h4>Balance ${ctxUser.balance}</h4>
             Withdraw Amount<br/>
-            <input type="number" min="0" className="form-control" name="transaction" placeholder="Withdraw Amount"/><br/>
+            <input type="number" min="0" className="form-control" name="transaction" placeholder="Withdraw Amount" autoFocus/><br/>
             <input type="hidden" className="form-control" name="balance" value={ctxUser.balance}/>
             <input type="hidden" className="form-control" name="email" value={ctxUser.email}/>
           </>
