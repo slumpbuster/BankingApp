@@ -1,6 +1,12 @@
 const Deposit = () => {
   const ctx = React.useContext(UserContext);
-  //const ctxUser = ctx.filter(user => user.loggedIn === true)[0];
+  const elems = [
+    {elem:"header", label:"", name:"name", user:true, value:"name"},
+    {elem:"header", label:"Balance $", name:"current_balance", user:true, value:"balance"},
+    {elem:"input", type:"number", label:"Deposit Amount", name:"transaction", holder:"Deposit Amount", value:"", focus:true},
+    {elem:"input", type:"hidden", name:"balance", user:true, value:"balance"},
+    {elem:"input", type:"hidden", name:"email", user:true, value:"email"}
+  ]
 
   const handle = (data) => {
     for (let i=0; i< ctx.length; i++) {
@@ -16,7 +22,10 @@ const Deposit = () => {
   return (
     <Form
       header="Deposit"
+      submit="Deposit"
+      success="Add another deposit"
       handle={handle}
+      elems={elems}
       users={ctx}
     />
   )

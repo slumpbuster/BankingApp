@@ -35,7 +35,7 @@ const Card = (props) => {
         {props.title && (<h5 className="card-title">{props.title}</h5>)}
         {props.text && (<p className="card-text">{props.text}</p>)}
         {props.body}
-        {props.status && (<div id='createStatus'>{props.status}</div>)}
+        {props.status && (<div className="text-warning">{props.status}</div>)}
       </div>
     </div>      
   );    
@@ -43,52 +43,38 @@ const Card = (props) => {
 
 const Form = (props) => {
   const [status, setStatus] = React.useState('');
+  const [errors, setErrors] = React.useState({});
   const [show, setShow] = React.useState(true);
-  let newProps = {};
+  let newErrors = {};
 
   if (!checkLogin(props.users, props.header)) return;
   
-  newProps.header=props.header;
-  switch (props.header) {
-      case "CreateAccount":
-        newProps.header="Create Account";
-        newProps.success="Add another account";
-        break;
-    case "Deposit":
-      newProps.success="Add another deposit";
-      break;
-    case "Withdraw":
-      newProps.success="Take another Withdraw";
-      break;
-    default:
-  }
-  newProps.submit=newProps.header;
-  
   const validate = (field, label) => {
+    let error = {};
     if (field != undefined) {
       if (!field.toString()) {
-        setStatus('Error: ' + label);
+        error[`${label}`] = `${label} cannot be empty`;
         //setTimeout(() => setStatus(''),3000);
-        return false;
       } else {
         switch (label) {
           case "transaction":
             if (parseInt(field) < 0) {
-              setStatus('Error: amount canot be neagative');
-              return false;
+              error[`${label}`] = `Amount canot be neagative`;
             }
             break;
           case "email":
             if (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(field) === false) {
-              setStatus('Error: email is not valid');
-              return false;
+              error[`${label}`] = `Email is not valid`;
             }
             break;
           default:
         }
       }
     }
-    return true;
+    newErrors = {...newErrors, ...error};
+    setErrors(newErrors);
+    if (JSON.stringify(error) === '{}') return true;
+    return false;
   }
 
   const clearForm = (e) => {
@@ -99,19 +85,24 @@ const Form = (props) => {
     let formElements=e.target;
     let data = {}; 
     let frmData = {}; 
+    let rtn = true;
+
+    newErrors = {};
     for (var i=0; i<formElements.length; i++) {
       if (formElements[i].type!="submit") frmData[formElements[i].name]=formElements[i].value;
     }
-    let rtn = true;
+
     validate(frmData.name, "name") ? data.name = frmData.name : rtn = false;
     validate(frmData.email, "email") ? data.email = frmData.email : rtn = false;
     validate(frmData.password, "password") ? data.password = frmData.password : rtn = false;
     validate(frmData.balance, "balance") ? (frmData.balance != undefined ? data.balance = parseInt(frmData.balance) : data.balance = 0) : rtn = false;
     if (frmData.transaction != undefined) validate(frmData.transaction, "transaction") ? data.transaction = parseInt(frmData.transaction) : rtn = false;
+
     if (rtn) {
       setStatus('');
       rtn = props.handle(data);
       if (rtn === true) {
+        setErrors({});
         setShow(false);
       } else {
         setStatus(`Error: ${rtn}`);
@@ -120,79 +111,39 @@ const Form = (props) => {
     }
     if (!rtn) e.preventDefault();
   }
-
-  const FormDisplay = () => {
-    switch (props.header) {
-      case "Login":
-        return (
-          <>
-            Email address<br/>
-            <input type="input" className="form-control" name="email" placeholder="Enter email" autoFocus/><br/>
-            Password<br/>
-            <input type="password" className="form-control" name="password" placeholder="Enter password"/><br/>
-          </>
-        )
-        break;
-        case "CreateAccount":
-          return (
-            <>
-              Name<br/>
-              <input type="input" className="form-control" name="name" placeholder="Enter name" autoFocus/><br/>
-              Email address<br/>
-              <input type="input" className="form-control" name="email" placeholder="Enter email"/><br/>
-              Password<br/>
-              <input type="password" className="form-control" name="password" placeholder="Enter password"/><br/>
-              <input type="hidden" className="form-control" name="balance" value="0"/>
-            </>
-          )
-          break;
-      case "Deposit":
-        return (
-          <>
-            <h4>{ctxUser.name}</h4>
-            <h4>Balance ${ctxUser.balance}</h4>
-            Deposit Amount<br/>
-            <input type="number" min="0" className="form-control" name="transaction" placeholder="Deposit Amount" autoFocus/><br/>
-            <input type="hidden" className="form-control" name="balance" value={ctxUser.balance}/>
-            <input type="hidden" className="form-control" name="email" value={ctxUser.email}/>
-          </>
-        )
-        break;
-      case "Withdraw":
-        return (
-          <>
-            <h4>{ctxUser.name}</h4>
-            <h4>Balance ${ctxUser.balance}</h4>
-            Withdraw Amount<br/>
-            <input type="number" min="0" className="form-control" name="transaction" placeholder="Withdraw Amount" autoFocus/><br/>
-            <input type="hidden" className="form-control" name="balance" value={ctxUser.balance}/>
-            <input type="hidden" className="form-control" name="email" value={ctxUser.email}/>
-          </>
-        )
-        break;
-      default:
-        return (
-          <>
-          </>
-        )
-    }
-  }
-
+  
   return (
     <Card
       bgcolor="secondary"
       headerbgcolor="dark"
-      header={newProps.header}
+      header={props.header}
       status={status}
       body={show ? (
         <form id="form" onSubmit={(e) => {onSubmit(e)}}>
-          <FormDisplay />
-          <button type="submit" className="btn btn-light">{newProps.submit}</button>
+          {props.elems.map((elem) => (
+            <div key={elem.name}>
+              {elem.elem === "header" ? <h4>{elem.label}{elem.user ? ctxUser[`${elem.value}`] : elem.value}</h4> : <></>}
+              {elem.elem === "input" ?
+                (<>
+                  {elem.label ? <>{elem.label}<br/></> : <></>}
+                  <input type={elem.type} className="form-control" name={elem.name} placeholder={(elem.holder ? elem.holder : "")} defaultValue={elem.user ? ctxUser[`${elem.value}`] : elem.value} autoFocus={elem.focus ? true :false}/>
+                  {elem.type != "hidden" ?
+                    (<>
+                      {errors[`${elem.name}`] && (<div className="text-warning">{errors[`${elem.name}`]}</div>)}
+                      <br/>
+                    </>):(<></>)
+                  }
+                </>):(<></>)
+              }
+            </div>
+          ))}
+          <br/>
+          <button type="submit" className="btn btn-light">{props.submit}</button>
         </form>
         ):(
           <>
           <h5>Success</h5>
-          <button className="btn btn-light" onClick={(e) => {clearForm(e)}}>{newProps.success}</button>
+          <button className="btn btn-light" onClick={(e) => {clearForm(e)}}>{props.success}</button>
           </>
         )
       }
@@ -201,20 +152,13 @@ const Form = (props) => {
 }
 
 const Info = (props) => {
-  let newProps = {};
+  let newProps = {...props};
   if (!checkLogin(props.users, props.header)) return;
 
   switch (props.header) {
     case "Balance":
-      newProps.header=props.header;
       newProps.title=ctxUser.name;
       newProps.text=`Balance $${ctxUser.balance}`;
-      break;
-    case "Home":
-      newProps.header="BadBank Landing Module";
-      newProps.title="Welcome to the bank";
-      newProps.text="You can move around using the navigation bar.";
-      newProps.body=(<img src="bank.png" className="img-fluid" alt="Responsive image"/>)
       break;
     default:
   }
