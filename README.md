@@ -54,8 +54,14 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 - 2022-04-25: Added autofocus on forms
 - 2022-04-26: Refactor / streamlined dorm creation using map
 - 2022-04-26: Added enhanced error display
+- 2022-04-26: Added password check for length of 8
+- 2022-04-26: Form submission button disabled until all inputs filled in
+- 2022-04-26: Added table for All Data
+- 2022-04-26: Added Navigation bold & underline for selected item and tooltip
+- 2022-04-26: Fixed Navigation Issues
 
 ## Roadmap of Future Improvements
+- Back-end data storage and retrieval
 
 ---------
 

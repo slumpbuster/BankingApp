@@ -2,14 +2,13 @@ const Route       = ReactRouterDOM.Route;
 const Link        = ReactRouterDOM.Link;
 const HashRouter  = ReactRouterDOM.HashRouter;
 const UserContext = React.createContext(null);
-const loginRequired = ["Deposit", "Withdraw", "Balance"];
+const loginRequired = ["deposit", "withdraw"];
 let ctxUser = [];
 
 const checkLogin = (users, header) => {
   if (loginRequired.includes(header)) {
     ctxUser = users.filter(user => user.loggedIn === true)[0];
     if (ctxUser === undefined || ctxUser === []){
-      document.getElementById('login').click();
       return false;
     }
   }
@@ -29,7 +28,7 @@ const Card = (props) => {
   }
   
   return (
-    <div className={cardClasses()} style={{maxWidth: "18rem"}}>
+    <div className={cardClasses()} style={{maxWidth: "30rem"}}>
       <div className={hdrClasses()}>{props.header}</div>
       <div className="card-body">
         {props.title && (<h5 className="card-title">{props.title}</h5>)}
@@ -44,8 +43,11 @@ const Card = (props) => {
 const Form = (props) => {
   const [status, setStatus] = React.useState('');
   const [errors, setErrors] = React.useState({});
+  const [frmData, setFrmData] = React.useState({});
+  const [frmInputs, setFrmInputs] = React.useState([]);
   const [show, setShow] = React.useState(true);
-  let newErrors = {};
+  const [submit, setSubmit] = React.useState(true);
+  let formErrors = {};
 
   if (!checkLogin(props.users, props.header)) return;
   
@@ -57,60 +59,81 @@ const Form = (props) => {
         //setTimeout(() => setStatus(''),3000);
       } else {
         switch (label) {
-          case "transaction":
-            if (parseInt(field) < 0) {
-              error[`${label}`] = `Amount canot be neagative`;
-            }
+          case "password":
+            if (field.length < 8) error[`${label}`] = `password must be at least 8 characters`;
             break;
           case "email":
-            if (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(field) === false) {
-              error[`${label}`] = `Email is not valid`;
-            }
+            if (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(field) === false) 
+              error[`${label}`] = `email is not valid`;
+            break;
+          case "transaction":
+            if (parseFloat(field) < 0) error[`${label}`] = `amount canot be neagative`;
+            if (parseFloat(field) === 0) error[`${label}`] = `amount canot be $0`;
             break;
           default:
         }
       }
     }
-    newErrors = {...newErrors, ...error};
-    setErrors(newErrors);
+    formErrors = {...formErrors, ...error};
+    setErrors(formErrors);
     if (JSON.stringify(error) === '{}') return true;
     return false;
   }
-
+  
   const clearForm = (e) => {
     setShow(true);
-  }  
+  }
+  
+  const onChange = (e) => {
+    let tmpFrmData = {...frmData};
+    let tmpSubmit = false;
+    tmpFrmData[e.target.name] = e.target.value;
+    frmInputs.map((frmInput) => {
+      if (tmpFrmData[frmInput] === undefined) {
+        tmpSubmit = true;
+      } else {
+        if (tmpFrmData[frmInput].length <= 0) tmpSubmit = true;
+      }
+    });
+    setFrmData(tmpFrmData);
+    setSubmit(tmpSubmit);
+  }
 
   const onSubmit = (e) => {
-    let formElements=e.target;
-    let data = {}; 
-    let frmData = {}; 
     let rtn = true;
 
-    newErrors = {};
-    for (var i=0; i<formElements.length; i++) {
-      if (formElements[i].type!="submit") frmData[formElements[i].name]=formElements[i].value;
-    }
-
-    validate(frmData.name, "name") ? data.name = frmData.name : rtn = false;
-    validate(frmData.email, "email") ? data.email = frmData.email : rtn = false;
-    validate(frmData.password, "password") ? data.password = frmData.password : rtn = false;
-    validate(frmData.balance, "balance") ? (frmData.balance != undefined ? data.balance = parseInt(frmData.balance) : data.balance = 0) : rtn = false;
-    if (frmData.transaction != undefined) validate(frmData.transaction, "transaction") ? data.transaction = parseInt(frmData.transaction) : rtn = false;
-
+    formErrors = {};
+    frmInputs.map((frmInput) => {
+      if (!validate(frmData[frmInput], frmInput)) rtn = false;
+    });
+    
     if (rtn) {
       setStatus('');
-      rtn = props.handle(data);
+      rtn = props.handle(frmData);
       if (rtn === true) {
         setErrors({});
         setShow(false);
       } else {
-        setStatus(`Error: ${rtn}`);
+        setStatus(rtn);
         rtn = false;
       }
     }
     if (!rtn) e.preventDefault();
   }
+  React.useEffect(() => {
+    let tmpFrmInputs = [];
+    let tmpFrmData = {};
+    props.elems.map((elem) => {
+      if (elem.elem === "input") {
+        if (["input", "password", "number", "hidden"].includes(elem.type)) {
+          tmpFrmData[elem.name] = elem.user ? ctxUser[`${elem.value}`] : elem.value;
+          tmpFrmInputs.push(elem.name);
+        }
+      };
+    });
+    setFrmInputs(tmpFrmInputs);
+    setFrmData(tmpFrmData);
+  }, [])
   
   return (
     <Card
@@ -126,7 +149,7 @@ const Form = (props) => {
               {elem.elem === "input" ?
                 (<>
                   {elem.label ? <>{elem.label}<br/></> : <></>}
-                  <input type={elem.type} className="form-control" name={elem.name} placeholder={(elem.holder ? elem.holder : "")} defaultValue={elem.user ? ctxUser[`${elem.value}`] : elem.value} autoFocus={elem.focus ? true :false}/>
+                  <input type={elem.type} step={(elem.step ? elem.step : "any")} className="form-control" name={elem.name} placeholder={(elem.holder ? elem.holder : "")} defaultValue={elem.user ? ctxUser[`${elem.value}`] : elem.value} autoFocus={elem.focus ? true :false} onChange={(e) => {onChange(e)}}/>
                   {elem.type != "hidden" ?
                     (<>
                       {errors[`${elem.name}`] && (<div className="text-warning">{errors[`${elem.name}`]}</div>)}
@@ -138,7 +161,7 @@ const Form = (props) => {
             </div>
           ))}
           <br/>
-          <button type="submit" className="btn btn-light">{props.submit}</button>
+          <button type="submit" className="btn btn-light" disabled={submit}>{props.submit}</button>
         </form>
         ):(
           <>
@@ -147,31 +170,6 @@ const Form = (props) => {
           </>
         )
       }
-    />
-  )
-}
-
-const Info = (props) => {
-  let newProps = {...props};
-  if (!checkLogin(props.users, props.header)) return;
-
-  switch (props.header) {
-    case "Balance":
-      newProps.title=ctxUser.name;
-      newProps.text=`Balance $${ctxUser.balance}`;
-      break;
-    default:
-  }
-
-  return (
-    <Card
-      headerbgcolor="dark"
-      headertxtcolor="white"
-      txtcolor="black"
-      header={newProps.header}
-      title={newProps.title}
-      text={newProps.text}
-      body={newProps.body}
     />
   )
 }

@@ -10,11 +10,11 @@ const Login = () => {
     ctx.map((user) => {
       if (user.email === data.email && user.password === data.password) {
         user.loggedIn = true;
-        location.href='#/balance/'
+        document.getElementById('home').click();
         return true;
       }
     })
-    return "invalid credentials";
+    return "Login Failed: invalid credentials";
   }
   
   return (

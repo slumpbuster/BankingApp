@@ -3,14 +3,20 @@
     {
       "name": "abel",
       "email": "abel@mit.edu",
-      "password": "secret",
+      "password": "mysecret",
       "balance": 100
     },
     {
-      "name": "test",
-      "email": "test@test.com",
-      "password": "secret",
+      "name": "joe",
+      "email": "joe@mit.edu",
+      "password": "password",
       "balance": 50
+    },
+    {
+      "name": "betty",
+      "email": "betty@mit.edu",
+      "password": "12345678",
+      "balance": 150
     }
   ]
 }
