@@ -65,6 +65,7 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 - 2022-04-27: Fixed Navigation Toggle Button Show/Collapse Issue
 - 2022-04-27: Added Transaction History
 - 2022-04-27: Moved logic and Javascript stlying to their own files
+- 2022-04-27: Added check for existing email
 
 ## Roadmap of Future Improvements
 - Back-end data storage and retrieval

@@ -8,6 +8,12 @@ const CreateAccount = () => {
   ]
 
   const handle = (data) => {
+    for (let i=0; i< ctx.length; i++) {
+      if (ctx[i].email === data.email) {
+        return "Error: email already exists";
+        break
+      }
+    }
     data.balance = data.balance.length === 0 ? 0 : parseFloat(data.balance);
     data.transactions=[];
     ctx.push(data);
