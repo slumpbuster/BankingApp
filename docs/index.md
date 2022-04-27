@@ -34,15 +34,18 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 - **/alldata.js** - Contains the React code to show the data stored in Global State
 - **/balance.js** - Contains the React code to show the balance for the logged in user
 - **/bank.png** - Image/Logo of a bank
-- **/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout, and to handle validation
+- **/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout
 - **/createaccount.js** - Contains the React code to show the form to Create a new Account
 - **/deposit.js** - Contains the React code to allow the logged in user to deposit into their account
 - **/home.js** - Contains the React code to show the home/welcome page
 - **/index.html** - Start-up file to be opened by browser
 - **/index.js** - Contains the routing and UserContext Global state
+- **/logic.js** - Contains most of the logi for login and validation
 - **/login.js** - Contains the React code to show the login form
 - **/navbar.js** - Contains the React code to create the navbar with proper routes
 - **/users.json** - Contains the starting data (list of users/accounts)
+- **/styles.css** - Stylesheet file that positions objects, controls text, colors, and layout
+- **/styles.js** - Contains the javascript defined styles
 - **/withdraw.js** - Contains the React code to allow the logged in user to withdraw from their account
 
 ---------
@@ -61,6 +64,7 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 - 2022-04-26: Fixed Navigation Issues
 - 2022-04-27: Fixed Navigation Toggle Button Show/Collapse Issue
 - 2022-04-27: Added Transaction History
+- 2022-04-27: Moved logic and Javascript stlying to their own files
 
 ## Roadmap of Future Improvements
 - Back-end data storage and retrieval

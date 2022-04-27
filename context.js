@@ -2,35 +2,22 @@ const Route       = ReactRouterDOM.Route;
 const Link        = ReactRouterDOM.Link;
 const HashRouter  = ReactRouterDOM.HashRouter;
 const UserContext = React.createContext(null);
-const loginRequired = ["deposit", "withdraw"];
 const maxWidth = "30rem";
 let ctxUser = [];
 
 const checkLogin = (users, header) => {
-  if (loginRequired.includes(header.toLowerCase())) {
-    ctxUser = users.filter(user => user.loggedIn === true)[0];
-    if (ctxUser === undefined || ctxUser === []){
-      return false;
-    }
+  let rtn = validateLogin(users, header);
+  if (typeof rtn != "boolean") {
+    ctxUser = rtn;
+    rtn = true;
   }
-  return true;
-}
+  return rtn;
+};
 
 const Card = (props) => {
-  const cardClasses = () => {
-    const bg  = props.bgcolor ? ' bg-' + props.bgcolor : ' ';
-    const txt = props.txtcolor ? ' text-' + props.txtcolor: ' text-white';
-    return 'card mb-3 ' + bg + txt;
-  }
-  const hdrClasses = () => {
-    const bg  = props.headerbgcolor ? ' bg-' + props.headerbgcolor : props.bgcolor ? ' bg-' + props.bgcolor : ' ';
-    const txt = props.headertxtcolor ? ' text-' + props.headertxtcolor: props.txtcolor ? ' text-' + props.txtcolor: ' text-white';
-    return 'card-header ' + bg + txt;
-  }
-  
   return (
-    <div className={cardClasses()} style={{maxWidth: props.maxWidth ? props.maxWidth : maxWidth}}>
-      <div className={hdrClasses()}>{props.header}</div>
+    <div className={cardClasses(props.bgcolor, props.txtcolor)} style={{maxWidth: props.maxWidth ? props.maxWidth : maxWidth}}>
+      <div className={hdrClasses(props.headerbgcolor, props.headertxtcolor, props.bgcolor, props.txtcolor)}>{props.header}</div>
       <div className="card-body">
         {props.title && (<h5 className="card-title">{props.title}</h5>)}
         {props.text && (<p className="card-text">{props.text}</p>)}
@@ -64,57 +51,24 @@ const Form = (props) => {
   const [submit, setSubmit] = React.useState(true);
   let formErrors = {};
   
+  const clearForm = (e) => {setShow(true);}
+
   const validate = (field, label) => {
-    let error = {};
-    if (field != undefined) {
-      if (!field.toString()) {
-        error[`${label}`] = `${label} cannot be empty`;
-        //setTimeout(() => setStatus(''),3000);
-      } else {
-        switch (label) {
-          case "password":
-            if (field.length < 8) error[`${label}`] = `password must be at least 8 characters`;
-            break;
-          case "email":
-            if (/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(field) === false) 
-              error[`${label}`] = `email is not valid`;
-            break;
-          case "transaction":
-            if (parseFloat(field) < 0) error[`${label}`] = `amount canot be neagative`;
-            if (parseFloat(field) === 0) error[`${label}`] = `amount canot be $0`;
-            break;
-          default:
-        }
-      }
-    }
-    formErrors = {...formErrors, ...error};
+    formErrors = frmValidate(formErrors,field, label);
     setErrors(formErrors);
-    if (JSON.stringify(error) === '{}') return true;
+    if (JSON.stringify(formErrors) === '{}') return true;
     return false;
   }
-  
-  const clearForm = (e) => {
-    setShow(true);
-  }
-  
+
   const onChange = (e) => {
     let tmpFrmData = {...frmData};
-    let tmpSubmit = false;
-    tmpFrmData[e.target.name] = e.target.value;
-    frmInputs.map((frmInput) => {
-      if (tmpFrmData[frmInput] === undefined) {
-        tmpSubmit = true;
-      } else {
-        if (tmpFrmData[frmInput].length <= 0) tmpSubmit = true;
-      }
-    });
+    let rtn = frmOnChange(e, frmInputs, tmpFrmData);
     setFrmData(tmpFrmData);
-    setSubmit(tmpSubmit);
+    setSubmit(rtn);
   }
 
   const onSubmit = (e) => {
     let rtn = true;
-
     formErrors = {};
     frmInputs.map((frmInput) => {
       if (!validate(frmData[frmInput], frmInput)) rtn = false;
