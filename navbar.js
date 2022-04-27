@@ -16,22 +16,20 @@ const NavBar = () => {
   }
   
   return(
-    <>
-    <nav className="navbar navbar-dark bg-dark navbar-expand-md">
-      <a id="home" className="navbar-brand" onClick={handleNav({name:"home",href:"#"})} data-toggle="tooltip" data-placement="bottom" title="Main/Home Page">BadBank</a>
-      <button className="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar">
+    <nav className="navbar navbar-dark bg-dark navbar-expand-md" style={{padding: "0.75em"}} role="navigation">
+      <a id="home" className="navbar-brand" onClick={handleNav({name:"home",href:"#"})} data-toggle="tooltip" data-placement="bottom" title="Main/Home Page" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">BadBank</a>
+      <button className="navbar-toggler collapsed ms-auto" data-bs-toggle="collapse" data-bs-target="#navbar-collapse">
         <span className="navbar-toggler-icon"></span>
       </button>
-      <div className="collapse navbar-collapse" id="navbar">
+      <div className="collapse navbar-collapse" id="navbar-collapse">
         <ul className="navbar-nav">
           {links.map((element, index) => (
             <li key={element.name} className="nav-item" data-toggle="tooltip" data-placement="bottom" title={element.tooltip}>
-              <a id={element.name} className={selected === element.name ? "linkNavActive nav-link" : "nav-link"} onClick={handleNav(element)}>{element.text}</a>
+              <a id={element.name} className={selected === element.name ? "linkNavActive nav-link" : "nav-link"} data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show" onClick={handleNav(element)}>{element.text}</a>
             </li>
           ))}
         </ul>
       </div>
     </nav>
-    </>
   );
 }

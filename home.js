@@ -1,9 +1,6 @@
 const Home = () => {
   return (
-    <Card
-      headerbgcolor="dark"
-      headertxtcolor="white"
-      txtcolor="black"
+    <Info
       header="BadBank Landing Module"
       title="Welcome to the bank"
       text="You can move around using the navigation bar."

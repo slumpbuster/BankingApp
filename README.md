@@ -59,6 +59,8 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 - 2022-04-26: Added table for All Data
 - 2022-04-26: Added Navigation bold & underline for selected item and tooltip
 - 2022-04-26: Fixed Navigation Issues
+- 2022-04-27: Fixed Navigation Toggle Button Show/Collapse Issue
+- 2022-04-27: Added Transaction History
 
 ## Roadmap of Future Improvements
 - Back-end data storage and retrieval

@@ -1,5 +1,6 @@
 const Deposit = () => {
   const ctx = React.useContext(UserContext);
+  const header = "Deposit";
   const elems = [
     {elem:"header", label:"Balance $", name:"current_balance", user:true, value:"balance"},
     {elem:"input", type:"number", step:"0.01", label:"Deposit Amount", name:"transaction", holder:"Deposit Amount", value:"", focus:true},
@@ -10,7 +11,12 @@ const Deposit = () => {
     data.transaction = data.transaction.length === 0 ? 0 : parseFloat(data.transaction);
     for (let i=0; i< ctx.length; i++) {
       if (ctx[i].email === data.email) {
-        ctx[i].balance = parseFloat(ctx[i].balance) + data.transaction;
+        let oldBalance = parseFloat(ctx[i].balance);
+        let transaction = data.transaction;
+        let newBalance = oldBalance + transaction;
+        let transactions = [...ctx[i].transactions,...[{starting:oldBalance, transaction:transaction, ending:newBalance}]];
+        ctx[i].transactions = [...transactions];
+        ctx[i].balance = newBalance;
         return true;
         break
       }
@@ -18,14 +24,24 @@ const Deposit = () => {
     return "Error: user not found";
   }
 
-  return (
-    <Form
-      header="Deposit"
-      submit="Deposit"
-      success="Add another deposit"
-      handle={handle}
-      elems={elems}
-      users={ctx}
-    />
-  )
+  if (!(checkLogin(ctx, "Deposit"))) {
+    return (
+      <Info
+        header={header}
+        title="No user logged in"
+        text={`Please log in to make a ${header.toLowerCase()}.`}
+      />
+    )
+  } else {
+    return (
+      <Form
+        header={header}
+        submit={header}
+        success={`Add another ${header.toLowerCase()}`}
+        handle={handle}
+        elems={elems}
+        users={ctx}
+      />
+    )
+  }
 }

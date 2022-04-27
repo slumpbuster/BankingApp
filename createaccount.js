@@ -9,6 +9,7 @@ const CreateAccount = () => {
 
   const handle = (data) => {
     data.balance = data.balance.length === 0 ? 0 : parseFloat(data.balance);
+    data.transactions=[];
     ctx.push(data);
     return true;
   }

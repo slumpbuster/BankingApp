@@ -3,10 +3,11 @@ const Link        = ReactRouterDOM.Link;
 const HashRouter  = ReactRouterDOM.HashRouter;
 const UserContext = React.createContext(null);
 const loginRequired = ["deposit", "withdraw"];
+const maxWidth = "30rem";
 let ctxUser = [];
 
 const checkLogin = (users, header) => {
-  if (loginRequired.includes(header)) {
+  if (loginRequired.includes(header.toLowerCase())) {
     ctxUser = users.filter(user => user.loggedIn === true)[0];
     if (ctxUser === undefined || ctxUser === []){
       return false;
@@ -28,7 +29,7 @@ const Card = (props) => {
   }
   
   return (
-    <div className={cardClasses()} style={{maxWidth: "30rem"}}>
+    <div className={cardClasses()} style={{maxWidth: props.maxWidth ? props.maxWidth : maxWidth}}>
       <div className={hdrClasses()}>{props.header}</div>
       <div className="card-body">
         {props.title && (<h5 className="card-title">{props.title}</h5>)}
@@ -40,6 +41,20 @@ const Card = (props) => {
   );    
 }
 
+const Info = (props) => {  
+  return (
+    <Card
+      headerbgcolor="dark"
+      headertxtcolor="white"
+      txtcolor="black"
+      header={props.header}
+      title={props.title}
+      text={props.text}
+      body={props.body}
+    />
+  )
+}
+
 const Form = (props) => {
   const [status, setStatus] = React.useState('');
   const [errors, setErrors] = React.useState({});
@@ -48,8 +63,6 @@ const Form = (props) => {
   const [show, setShow] = React.useState(true);
   const [submit, setSubmit] = React.useState(true);
   let formErrors = {};
-
-  if (!checkLogin(props.users, props.header)) return;
   
   const validate = (field, label) => {
     let error = {};
@@ -106,7 +119,6 @@ const Form = (props) => {
     frmInputs.map((frmInput) => {
       if (!validate(frmData[frmInput], frmInput)) rtn = false;
     });
-    
     if (rtn) {
       setStatus('');
       rtn = props.handle(frmData);
@@ -120,6 +132,7 @@ const Form = (props) => {
     }
     if (!rtn) e.preventDefault();
   }
+
   React.useEffect(() => {
     let tmpFrmInputs = [];
     let tmpFrmData = {};
@@ -133,8 +146,8 @@ const Form = (props) => {
     });
     setFrmInputs(tmpFrmInputs);
     setFrmData(tmpFrmData);
-  }, [])
-  
+  }, []);
+
   return (
     <Card
       bgcolor="secondary"
