@@ -13,7 +13,7 @@ const Deposit = () => {
       if (ctx[i].email === data.email) {
         let oldBalance = parseFloat(ctx[i].balance);
         let transaction = data.transaction;
-        let newBalance = oldBalance + transaction;
+        let newBalance = Math.round(((oldBalance + transaction) + Number.EPSILON) * 100) / 100;
         let transactions = [...ctx[i].transactions,...[{starting:oldBalance, transaction:transaction, ending:newBalance}]];
         ctx[i].transactions = [...transactions];
         ctx[i].balance = newBalance;
