@@ -22,7 +22,7 @@ const Card = (props) => {
         {props.title && (<h5 className="card-title">{props.title}</h5>)}
         {props.text && (<p className="card-text">{props.text}</p>)}
         {props.body}
-        {props.status && (<div className="text-warning">{props.status}</div>)}
+        {props.status && (<div className="text-danger warning">{props.status}</div>)}
       </div>
     </div>      
   );    
@@ -31,13 +31,14 @@ const Card = (props) => {
 const Info = (props) => {  
   return (
     <Card
-      headerbgcolor="dark"
-      headertxtcolor="white"
-      txtcolor="black"
+      headerbgcolor="secondary"
+      headertxtcolor="dark"
+      txtcolor="dark"
       header={props.header}
       title={props.title}
       text={props.text}
       body={props.body}
+      maxWidth={props.maxWidth}
     />
   )
 }
@@ -104,8 +105,9 @@ const Form = (props) => {
 
   return (
     <Card
-      bgcolor="secondary"
-      headerbgcolor="dark"
+      bgcolor="light"
+      headerbgcolor="secondary"
+      txtcolor="dark"
       header={props.header}
       status={status}
       body={show ? (
@@ -119,7 +121,7 @@ const Form = (props) => {
                   <input type={elem.type} step={(elem.step ? elem.step : "any")} className="form-control" name={elem.name} placeholder={(elem.holder ? elem.holder : "")} defaultValue={elem.user ? ctxUser[`${elem.value}`] : elem.value} autoFocus={elem.focus ? true :false} onChange={(e) => {onChange(e)}}/>
                   {elem.type != "hidden" ?
                     (<>
-                      {errors[`${elem.name}`] && (<div className="text-warning">{errors[`${elem.name}`]}</div>)}
+                      {errors[`${elem.name}`] && (<div className="text-warning warning">{errors[`${elem.name}`]}</div>)}
                       <br/>
                     </>):(<></>)
                   }
@@ -128,12 +130,12 @@ const Form = (props) => {
             </div>
           ))}
           <br/>
-          <button type="submit" className="btn btn-light" disabled={submit}>{props.submit}</button>
+          <button type="submit" className="btn btn-secondary" disabled={submit}>{(props.submit ? props.submit : props.header)}</button>
         </form>
         ):(
           <>
-          <h5>Success</h5>
-          <button className="btn btn-light" onClick={(e) => {clearForm(e)}}>{props.success}</button>
+          <h5 className="text-success">Success</h5>
+          <button className="btn btn-secondary" onClick={(e) => {clearForm(e)}}>{props.success}</button>
           </>
         )
       }

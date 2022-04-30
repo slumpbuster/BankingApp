@@ -41,7 +41,6 @@ const Withdraw = () => {
     return (
       <Form
         header={header}
-        submit={header}
         success={`Take another ${header.toLowerCase()}`}
         handle={handle}
         elems={elems}

@@ -20,7 +20,6 @@ const Login = () => {
   return (
     <Form
       header="Login"
-      submit="Login"
       handle={handle}
       elems={elems}
     />

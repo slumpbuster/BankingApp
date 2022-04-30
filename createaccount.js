@@ -23,7 +23,6 @@ const CreateAccount = () => {
   return (
     <Form
       header="Create Account"
-      submit="Create Account"
       success="Add another account"
       handle={handle}
       elems={elems}

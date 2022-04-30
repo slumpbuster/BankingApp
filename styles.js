@@ -7,5 +7,5 @@ const cardClasses = (bgcolor, txtcolor) => {
 const hdrClasses = (headerbgcolor, headertxtcolor, bgcolor, txtcolor) => {
   const bg  = headerbgcolor ? ' bg-' + headerbgcolor : bgcolor ? ' bg-' + bgcolor : ' ';
   const txt = headertxtcolor ? ' text-' + headertxtcolor: txtcolor ? ' text-' + txtcolor: ' text-white';
-  return 'card-header ' + bg + txt;
+  return 'card-header header ' + bg + txt;
 }

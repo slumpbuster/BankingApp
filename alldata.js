@@ -5,16 +5,16 @@ const AllData = () => {
   const transactions = ["starting", "transaction", "ending"];
 
   return (
-    <Card
-      headerbgcolor="dark"
-      headertxtcolor="white"
-      txtcolor="black"
+    <Info
+      headerbgcolor="secondary"
+      headertxtcolor="dark"
+      txtcolor="dark"
       maxWidth="60rem"
       header={"All Data"}
       body=
         {ctx.map((user, index) => (
           <table key={`data_${index}`} className="table">
-            <thead className="thead-secondary bg-secondary">
+            <thead className="thead-dark bg-dark text-light">
               <tr>
                 {headers.map((hdr) => (
                   <th key={hdr} scope="col">{hdr.toUpperCase()}</th>

@@ -2,3 +2,10 @@
   font-weight: 700 !important;
   text-decoration: underline !important;
 }
+.warning {
+  font-weight: 600;
+}
+.header {
+  font-size: 20px;
+  font-weight: 600;
+}

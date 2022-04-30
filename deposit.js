@@ -36,7 +36,6 @@ const Deposit = () => {
     return (
       <Form
         header={header}
-        submit={header}
         success={`Add another ${header.toLowerCase()}`}
         handle={handle}
         elems={elems}
