@@ -37,6 +37,7 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 - **/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout
 - **/createaccount.js** - Contains the React code to show the form to Create a new Account
 - **/deposit.js** - Contains the React code to allow the logged in user to deposit into their account
+- **/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
 - **/home.js** - Contains the React code to show the home/welcome page
 - **/index.html** - Start-up file to be opened by browser
 - **/index.js** - Contains the routing and UserContext Global state
