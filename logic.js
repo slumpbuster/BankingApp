@@ -30,6 +30,7 @@ const frmValidate = (formErrors, field, label) => {
         case "transaction":
           if (parseFloat(field) < 0) error[`${label}`] = `amount canot be neagative`;
           if (parseFloat(field) === 0) error[`${label}`] = `amount canot be $0`;
+          if (isNaN(field)) error[`${label}`] = `amount must be a number`;
           break;
         default:
       }
