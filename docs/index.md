@@ -31,23 +31,42 @@ This was done as an assignment in the MIT course - Full Stack Development with M
 ---------
 
 ## Files 
-- **/alldata.js** - Contains the React code to show the data stored in Global State
-- **/balance.js** - Contains the React code to show the balance for the logged in user
-- **/bank.png** - Image/Logo of a bank
-- **/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout
-- **/createaccount.js** - Contains the React code to show the form to Create a new Account
-- **/deposit.js** - Contains the React code to allow the logged in user to deposit into their account
-- **/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
-- **/home.js** - Contains the React code to show the home/welcome page
-- **/index.html** - Start-up file to be opened by browser
-- **/index.js** - Contains the routing and UserContext Global state
-- **/logic.js** - Contains most of the logi for login and validation
-- **/login.js** - Contains the React code to show the login form
-- **/navbar.js** - Contains the React code to create the navbar with proper routes
-- **/users.json** - Contains the starting data (list of users/accounts)
-- **/styles.css** - Stylesheet file that positions objects, controls text, colors, and layout
-- **/styles.js** - Contains the javascript defined styles
-- **/withdraw.js** - Contains the React code to allow the logged in user to withdraw from their account
+- **/Standalone** - Standalone React App
+  - **/alldata.js** - Contains the React code to show the data stored in Global State
+  - **/bank.png** - Image/Logo of a bank
+  - **/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout
+  - **/createaccount.js** - Contains the React code to show the form to Create a new Account
+  - **/deposit.js** - Contains the React code to allow the logged in user to deposit into their account
+  - **/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
+  - **/home.js** - Contains the React code to show the home/welcome page
+  - **/index.html** - Start-up file to be opened by browser
+  - **/index.js** - Contains the routing and UserContext Global state
+  - **/logic.js** - Contains most of the logi for login and validation
+  - **/login.js** - Contains the React code to show the login form
+  - **/navbar.js** - Contains the React code to create the navbar with proper routes
+  - **/users.json** - Contains the starting data (list of users/accounts)
+  - **/styles.css** - Stylesheet file that positions objects, controls text, colors, and layout
+  - **/styles.js** - Contains the javascript defined styles
+  - **/withdraw.js** - Contains the React code to allow the logged in user to withdraw from their account
+- **/Create-React-App** - React App
+  - **/public/bank.png** - Image/Logo of a bank
+  - **/public/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
+  - **/public/index.html** - Start-up file to be opened by browser
+  - **/public/users.json** - Contains the starting data (list of users/accounts)
+  - **/src/App.css** - Stylesheet file that positions objects, controls text, colors, and layout
+  - **/src/App.js** - Contains the routing and UserContext Global state
+  - **/src/index.css** - Stylesheet file that positions objects, controls text, colors, and layo
+  - **/src/index.js** - Contains the ReactDom
+  - **/src/alldata.js** - Contains the React code to show the data stored in Global State
+  - **/src/Components/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout
+  - **/src/Components/createaccount.js** - Contains the React code to show the form to Create a new Account
+  - **/src/Components/deposit.js** - Contains the React code to allow the logged in user to deposit into their account
+  - **/src/Components/home.js** - Contains the React code to show the home/welcome page
+  - **/src/Components/login.js** - Contains the React code to show the login form
+  - **/src/Components/navbar.js** - Contains the React code to create the navbar with proper routes
+  - **/src/Components/withdraw.js** - Contains the React code to allow the logged in user to withdraw from their account
+  - **/src/Middleware/logic.js** - Contains most of the logi for login and validation
+  - **/src/Middleware/styles.js** - Contains the javascript defined styles
 
 ---------
 

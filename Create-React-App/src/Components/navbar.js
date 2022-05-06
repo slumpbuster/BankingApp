@@ -1,6 +1,10 @@
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext, checkLogin } from './context';
+
 const NavBar = () => {
-  const ctx = React.useContext(UserContext);
-  const [selected, SetSelected] = React.useState("home");
+  const ctx = useContext(UserContext);
+  const [selected, SetSelected] = useState("home");
   const links = [
     {name:"createAccount", href:"#/createAccount/", text:"Create Account", tooltip:"Create a new bank account user"},
     {name:"login", href:"#/login/", text:"Login", tooltip:"Login as a bank account user"},
@@ -10,14 +14,16 @@ const NavBar = () => {
   ];
   
   const handleNav = (element) => (event) => {
+    //let navigate = useNavigate();
     let link = checkLogin(ctx, element.name) ? element.name : element.username;
     SetSelected(link);
-    location.href = checkLogin(ctx, element.name) ? element.href : element.userhref;
+    window.location.href = checkLogin(ctx, element.name) ? element.href : element.userhref;
+    //navigate(checkLogin(ctx, element.name) ? element.href : element.userhref, { replace: true });
   }
   
   return(
     <nav className="navbar navbar-dark bg-dark navbar-expand-md" style={{padding: "0.75em"}} role="navigation">
-      <a id="home" className="navbar-brand" onClick={handleNav({name:"home",href:"#"})} data-toggle="tooltip" data-placement="bottom" title="Main/Home Page" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">BadBank</a>
+      <a id="home" className="linkHover navbar-brand" onClick={handleNav({name:"home",href:"#"})} data-toggle="tooltip" data-placement="bottom" title="Main/Home Page" data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show">BadBank</a>
       <button className="navbar-toggler collapsed ms-auto" data-bs-toggle="collapse" data-bs-target="#navbar-collapse">
         <span className="navbar-toggler-icon"></span>
       </button>
@@ -25,7 +31,7 @@ const NavBar = () => {
         <ul className="navbar-nav">
           {links.map((element, index) => (
             <li key={element.name} className="nav-item" data-toggle="tooltip" data-placement="bottom" title={element.tooltip}>
-              <a id={element.name} className={selected === element.name ? "linkNavActive nav-link" : "nav-link"} data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show" onClick={handleNav(element)}>{element.text}</a>
+              <a id={element.name} className={selected === element.name ? "linkNavActive nav-link" : "linkHover nav-link"} data-bs-toggle="collapse" data-bs-target=".navbar-collapse.show" onClick={handleNav(element)}>{element.text}</a>
             </li>
           ))}
         </ul>
@@ -33,3 +39,5 @@ const NavBar = () => {
     </nav>
   );
 }
+
+export default NavBar;
