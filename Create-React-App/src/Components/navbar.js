@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import { UserContext, checkLogin } from './context';
 
 const NavBar = () => {
@@ -14,11 +13,9 @@ const NavBar = () => {
   ];
   
   const handleNav = (element) => (event) => {
-    //let navigate = useNavigate();
     let link = checkLogin(ctx, element.name) ? element.name : element.username;
     SetSelected(link);
     window.location.href = checkLogin(ctx, element.name) ? element.href : element.userhref;
-    //navigate(checkLogin(ctx, element.name) ? element.href : element.userhref, { replace: true });
   }
   
   return(

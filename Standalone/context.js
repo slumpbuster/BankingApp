@@ -69,6 +69,7 @@ const Form = (props) => {
   }
 
   const onSubmit = (e) => {
+    e.preventDefault();
     let rtn = true;
     formErrors = {};
     frmInputs.map((frmInput) => {
@@ -85,7 +86,6 @@ const Form = (props) => {
         rtn = false;
       }
     }
-    if (!rtn) e.preventDefault();
   }
 
   React.useEffect(() => {

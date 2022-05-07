@@ -74,6 +74,7 @@ const Form = (props) => {
   }
 
   const onSubmit = (e) => {
+    e.preventDefault();
     let rtn = true;
     formErrors = {};
     frmInputs.map((frmInput) => {
@@ -90,7 +91,6 @@ const Form = (props) => {
         rtn = false;
       }
     }
-    if (!rtn) e.preventDefault();
   }
 
   useEffect(() => {
@@ -140,7 +140,7 @@ const Form = (props) => {
         ):(
           <>
           <h5 className="text-success">Success</h5>
-          <button className="btn btn-secondary" onClick={(e) => {clearForm(e)}}>{success}</button>
+          <button type="button"className="btn btn-secondary" onClick={(e) => {clearForm(e)}}>{success}</button>
           </>
         )
       }
