@@ -31,7 +31,10 @@ const Spa = () => {
   );
 }
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+root.render(<Spa/>);
+/*ReactDOM.render(
   <Spa/>,
   document.getElementById('root')
-);
+);*/
