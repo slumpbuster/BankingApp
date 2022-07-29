@@ -33,8 +33,9 @@ It shows a full three tier application with authentication
 - Once the command completes successfully, run npm run start
 - Your browser will open to the default application page
 2) Standalone
-- Once the command completes successfully, run http-server -c-1
-- Open your browser of choice and browse to http://127.0.0.1:8080/
+- Need to have a firebase account and setup both Auth and Storage and add config info in .env
+- Once the command completes successfully, run node index.js
+- Open your browser of choice and browse to http://127.0.0.1:3000/
 
 ## How to Run 
 - When the page is loaded in your browser, you will notice the Home/Welcome Page
@@ -45,22 +46,23 @@ It shows a full three tier application with authentication
 
 ## Files
 - **/Standalone** - Standalone React App
-  - **/alldata.js** - Contains the React code to show the data stored in Global State
-  - **/bank.png** - Image/Logo of a bank
-  - **/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout
-  - **/createaccount.js** - Contains the React code to show the form to Create a new Account
-  - **/deposit.js** - Contains the React code to allow the logged in user to deposit into their account
-  - **/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
-  - **/home.js** - Contains the React code to show the home/welcome page
-  - **/index.html** - Start-up file to be opened by browser
-  - **/index.js** - Contains the routing and UserContext Global state
-  - **/logic.js** - Contains most of the logi for login and validation
-  - **/login.js** - Contains the React code to show the login form
-  - **/navbar.js** - Contains the React code to create the navbar with proper routes
-  - **/users.json** - Contains the starting data (list of users/accounts)
-  - **/styles.css** - Stylesheet file that positions objects, controls text, colors, and layout
-  - **/styles.js** - Contains the javascript defined styles
-  - **/withdraw.js** - Contains the React code to allow the logged in user to withdraw from their account
+  - **/dal.js** - Contains the connection, retrieval, and manipulation of data to Mongo
+  - **/index.js** - Contains the apis from the client front end for CRUD
+  - **/.env - not in repo, needs created (Variables Needed: MONGO_URL, ALGORITHM, SECRETKEY, EXPIRES, APIKEY, AUTHDOMAIN, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID, MEASUREMENTID, PORT)
+  - **/public/alldata.js** - Contains the React code to show the logged in users transactions or if admin, all users information
+  - **/public/bank.png** - Image/Logo of a bank
+  - **/public/background.png** - Background image of all pages
+  - **/public/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout including javascript defined styles
+  - **/public/createaccount.js** - Contains the React code to show the form to Create a new Account
+  - **/public/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
+  - **/public/home.js** - Contains the React code to show the home/welcome page
+  - **/public/index.html** - Start-up file to be opened by browser
+  - **/public/index.js** - Contains the routing
+  - **/public/logic.js** - Contains most of the logi for login and validation
+  - **/public/login.js** - Contains the React code to show the login form
+  - **/public/navbar.js** - Contains the React code to create the navbar with proper routes
+  - **/public/styles.css** - Stylesheet file that positions objects, controls text, colors, and layout
+  - **/public/transaction.js** - Contains the React code to allow the logged in user to deposit and/or withdraw from their account
 - **/Create-React-App** - React App
   - **/public/bank.png** - Image/Logo of a bank
   - **/public/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
@@ -102,6 +104,11 @@ It shows a full three tier application with authentication
 - 2022-07-19: Standalone -> Added connection to MongoDB
 - 2022-07-19: Standalone -> Removed local datastore (json file)
 - 2022-07-19: Standalone -> Moved some calls over to access Mongo
+- 2022-07-29: Standalone -> Incorporated Firebase for Authentication and Storage
+- 2022-07-29: Standalone -> Added ability to upload check image and view
+- 2022-07-29: Standalone -> Added admin role with ability to see all users and mark user active/disabled
+- 2022-07-29: Standalone -> Incorporated JWT for user/role authentication when inserting/updating
+- 2022-07-29: Standalone -> Refactored
 
 ## Roadmap of Future Improvements
 - Finish Back-end data storage and retrieval
