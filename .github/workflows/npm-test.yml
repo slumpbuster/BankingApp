@@ -1,5 +1,8 @@
 name: npm test
-on: [push]
+on:
+  push:
+    paths:
+      - 'Standalone/**'
 jobs:
   tes:
     runs-on: ubuntu-latest
