@@ -170,12 +170,12 @@ const Form = (props) => {
             </div>
           ))}
           <br/>
-          <button type="submit" className="btn btn-secondary" disabled={submit}>{(props.submit ? props.submit : props.header)}</button>
+          <button id="frmSubmit" type="submit" className="btn btn-secondary" disabled={submit}>{(props.submit ? props.submit : props.header)}</button>
         </form>
         ):(
           <>
           <h5 className="text-success">Success</h5>
-          <button className="btn btn-secondary" onClick={(e) => {clearForm(e)}}>{props.success}</button>
+          <button id="frmClear" className="btn btn-secondary" onClick={(e) => {clearForm(e)}}>{props.success}</button>
           </>
         )
       }

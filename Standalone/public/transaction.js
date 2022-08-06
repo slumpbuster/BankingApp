@@ -1,4 +1,6 @@
 const Transaction = (props) => {
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
   const {type, setData} = props;
   const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState('');
@@ -21,8 +23,17 @@ const Transaction = (props) => {
     fetch(`/account/findAuth/`, urlHeader)
       .then(response => response.json())
       .then(data => {
-        setUser(data);
-    });
+        setLoading(false);
+        if (!invalid(data)) {
+          setUser(data);
+        } else {
+          setError(true);
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        setError(true);
+      });
   }
 
   React.useEffect(() => {
@@ -110,7 +121,23 @@ const Transaction = (props) => {
     setStatus("Error: user not found");
   }
 
-  if (!(checkLogin(header))) {
+  if (loading) {
+    return (
+      <Info
+        header="BadBank MERN Application"
+        title="Please wait while we load your account information."
+        body={(<img src="Loading.gif" className="img-fluid" alt="Loading"/>)}
+      />
+    )
+  } else if (error) {
+    return (
+      <Info
+        header="BadBank MERN Application"
+        title="An Error has occured. Please try logging in again."
+        body={(<img src="Error.jpg" className="img-fluid" alt="Error"/>)}
+      />
+    )
+  } else if (!(checkLogin(header))) {
     return (
       <Info
         header={header}

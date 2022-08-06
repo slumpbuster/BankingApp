@@ -1,4 +1,6 @@
 const AllData = () => {
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
   const [allUsers, setAllUsers] = React.useState([]);
   const [users, setUsers] = React.useState([]);
   const [admin, setAdmin] = React.useState(false);
@@ -18,6 +20,7 @@ const AllData = () => {
       .then(response => response.json())
       .then(data => {
         if (!invalid(data)) {
+          setLoading(false);
           setAdmin(data.role === "admin");
           if (data.role === "admin") {
             setHeader("All Users Data");
@@ -36,8 +39,14 @@ const AllData = () => {
             setAllUsers([data]);
             setUsers([data]);
           }
+        } else {
+          setError(true);
         }
-    });
+      })
+      .catch(error => {
+        setLoading(false);
+        setError(true);
+      });
   }, []);
   
   React.useEffect(() => {
@@ -126,96 +135,115 @@ const AllData = () => {
       return 0;
     });
   }
+  
 
-  return (
-    <Info
-      headerbgcolor="secondary"
-      headertxtcolor="dark"
-      txtcolor="dark"
-      maxWidth="70rem"
-      header={header}
-      body=
-        {<>
-          {admin &&
-            <div className="nav">
-              <div className="nav" style={{display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px", gridAutoRows: "minmax(50px, auto)"}}>
-                <div className="navslider" style={{gridColumn: 1}}>
-                  <label style={{margin: `0px 2px`}}>Only Disabled</label>
-                  <label className="switch" style={{marginLeft: 6+`px`}}>
-                    <input id={'isDisabled'} type="checkbox" checked={isDisabled} onChange={(e)=>{filterDisabled(e)}}/>
-                    <span className="slider round"></span>
-                  </label>
-                </div>
-                <div className="navbutton" style={{marginBottom: "12px", display: "inline"}}>
-                  <span>Filter by name/email: </span>
-                  <input id="search" type="text" value={query} onChange={event => setQuery(event.target.value)} style={{flexGrow: 1}}/>
-                  <button onClick={(e) => filterItems()} className="btn btn-secondary btn-sm" style={{flex: `0 0 75px`, float: `right`, marginLeft: `4px`}}>Filter</button>
+  if (loading) {
+    return (
+      <Info
+        header="BadBank MERN Application"
+        title="Please wait while we load your account information."
+        body={(<img src="Loading.gif" className="img-fluid" alt="Loading"/>)}
+      />
+    )
+  } else if (error) {
+    return (
+      <Info
+        header="BadBank MERN Application"
+        title="An Error has occured. Please try logging in again."
+        body={(<img src="Error.jpg" className="img-fluid" alt="Error"/>)}
+      />
+    ) 
+  } else {
+    return (
+      <Info
+        headerbgcolor="secondary"
+        headertxtcolor="dark"
+        txtcolor="dark"
+        maxWidth="70rem"
+        header={header}
+        body=
+          {<>
+            {admin &&
+              <div className="nav">
+                <div className="nav" style={{display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px", gridAutoRows: "minmax(50px, auto)"}}>
+                  <div className="navslider" style={{gridColumn: 1}}>
+                    <label style={{margin: `0px 2px`}}>Only Disabled</label>
+                    <label className="switch" style={{marginLeft: 6+`px`}}>
+                      <input id={'isDisabled'} type="checkbox" checked={isDisabled} onChange={(e)=>{filterDisabled(e)}}/>
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+                  <div className="navbutton" style={{marginBottom: "12px", display: "inline"}}>
+                    <span>Filter by name/email: </span>
+                    <input id="search" type="text" value={query} onChange={event => setQuery(event.target.value)} style={{flexGrow: 1}}/>
+                    <button onClick={(e) => filterItems()} className="btn btn-secondary btn-sm" style={{flex: `0 0 75px`, float: `right`, marginLeft: `4px`}}>Filter</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          }
-          {users.filter(user => user.role!=="admin").map((user, index) => (
-            <table key={`User_${index}`} className="table">
-              <thead className="thead-dark bg-dark text-light">
-                <tr>
-                  {headers.map((hdr) => (
-                    <th key={hdr} scope="col">{hdr.toUpperCase()}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {headers.map((hdr) => (
-                    <td key={`${hdr}_${index}`}>
-                      {hdr==="status" ?
-                        <select id={`${hdr}_${index}`} defaultValue={user[hdr]} onChange={(e) => {enableUer(e, user['authId'], user[hdr])}}>
-                          <option value="active">Active</option>
-                          <option value="disabled">Disabled</option>
-                        </select>
-                        : ((user[hdr]!==undefined) && (hdr==="balance" ? "$" : "") + user[hdr].toString())
-                      }
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td colSpan={headers.length}>
-                    <table className="table">
-                      <thead className="thead-light bg-light">
-                        <tr>
-                          {transactions.map((hdr) => (
-                            <th key={hdr} scope="col">{hdr.toUpperCase()}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {user.transactions!==undefined && user.transactions.map((transaction, i) => (
-                          <tr key={`Trans_${index}._${i}`}>
+            }
+            {users.filter(user => user.role!=="admin").map((user, index) => (
+              <table key={`User_${index}`} className="table">
+                <thead className="thead-dark bg-dark text-light">
+                  <tr>
+                    {headers.map((hdr) => (
+                      <th key={hdr} scope="col">{hdr.toUpperCase()}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {headers.map((hdr) => (
+                      <td key={`${hdr}_${index}`}>
+                        {hdr==="status" ?
+                          <select id={`${hdr}_${index}`} defaultValue={user[hdr]} onChange={(e) => {enableUer(e, user['authId'], user[hdr])}}>
+                            <option value="active">Active</option>
+                            <option value="disabled">Disabled</option>
+                          </select>
+                          : ((user[hdr]!==undefined) && (hdr==="balance" ? "$" : "") + user[hdr].toString())
+                        }
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td colSpan={headers.length}>
+                      <table className="table">
+                        <thead className="thead-light bg-light">
+                          <tr>
                             {transactions.map((hdr) => (
-                              <td key={`${hdr}_${index}`}>
-                                {hdr==="image" ?
-                                  transaction[hdr] ?
-                                    <a onClick={(e) => viewImage(transaction['transId'])} target="_blank" rel="noopener noreferrer" className="linkNavActive linkHover">View</a>
-                                  : <></>
-                                : ((transaction[hdr]!==undefined) && (["starting", "transaction", "ending"].includes(hdr) ? "$" : "") + transaction[hdr].toString())
-                              }
-                              </td>
+                              <th key={hdr} scope="col">{hdr.toUpperCase()}</th>
                             ))}
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ))}
-          <div id="myModal" className="modal">
-            <span className="close">&times;</span>
-            <img className="modal-content" id="imgModal" alt="transaction"/>
-            <div id="caption"></div>
-          </div>
-        </>
-      }
-    />
-  );
+                        </thead>
+                        <tbody>
+                          {user.transactions!==undefined && user.transactions.map((transaction, i) => (
+                            <tr key={`Trans_${index}._${i}`}>
+                              {transactions.map((hdr) => (
+                                <td key={`${hdr}_${index}`}>
+                                  {hdr==="image" ?
+                                    transaction[hdr] ?
+                                      <a onClick={(e) => viewImage(transaction['transId'])} target="_blank" rel="noopener noreferrer" className="linkNavActive linkHover">View</a>
+                                    : <></>
+                                  : ((transaction[hdr]!==undefined) && (["starting", "transaction", "ending"].includes(hdr) ? "$" : "") + transaction[hdr].toString())
+                                }
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            ))}
+            <div id="myModal" className="modal">
+              <span className="close">&times;</span>
+              <img className="modal-content" id="imgModal" alt="transaction"/>
+              <div id="caption"></div>
+            </div>
+          </>
+        }
+      />
+    );
+  }
 }

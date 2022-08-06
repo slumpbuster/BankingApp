@@ -69,21 +69,14 @@ const decrypt = (hash) => {
   return decrpyted.toString();
 };
 
-app.get('/account/create/:name/:email/:password', (req, res) => {
-  let auth = verifyToken(req);
-  if (auth===null) {
-    res.send({error: 'Invalid token'});
-  } else if (auth.error!==undefined) {
-    res.send({error: auth.error});
-  } else {
-    dal.create(auth.authId, req.params.name, req.params.email, encrypt(req.params.password))
-      .then(user => {
-        res.send(user);
-      })
-      .catch(err => {
-        res.send({error: err});
-      });
-  }
+app.get('/account/create/:authId/:name/:email/:password', (req, res) => {
+  dal.create(req.params.authId, req.params.name, req.params.email, encrypt(req.params.password))
+    .then(user => {
+      res.send(user);
+    })
+    .catch(err => {
+      res.send({error: err});
+    });
 })
 
 app.get('/account/update/transaction/:transaction/:balance', (req, res) => {
@@ -176,6 +169,19 @@ app.get('/account/status/:failedAttempts/:userId', (req, res) => {
     }
 })
 
+app.get('/account/alldatatest/', (req, res) => {
+  dal.all()
+    .then(users => {
+      users.map(user => {
+        user.password = decrypt(user.password);
+      });
+      res.send(users);
+    })
+    .catch(err => {
+      res.send({error: err});
+    });
+})
+
 app.get('/account/all/', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
@@ -239,3 +245,5 @@ app.get('/config/:info', (req, res) => {
 })
 
 app.listen(port, () => console.log(`Running on port ${port}`));
+
+module.exports = { app, firebaseConfig };
