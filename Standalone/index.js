@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const dal = require('./dal');
+const dal = require('./api/dal');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -69,8 +69,8 @@ const decrypt = (hash) => {
   return decrpyted.toString();
 };
 
-app.get('/account/create/:authId/:name/:email/:password', (req, res) => {
-  dal.create(req.params.authId, req.params.name, req.params.email, encrypt(req.params.password))
+app.get('/account/create/:authId/:name/:email/:password/:dob/:phone/:address/:csz/:savings/:checking', (req, res) => {
+  dal.create(req.params.authId, req.params.name, req.params.email, encrypt(req.params.password), req.params.dob, req.params.phone, req.params.address, req.params.csz, req.params.savings, req.params.checking)
     .then(user => {
       res.send(user);
     })
@@ -78,15 +78,14 @@ app.get('/account/create/:authId/:name/:email/:password', (req, res) => {
       res.send({error: err});
     });
 })
-
-app.get('/account/update/transaction/:transaction/:balance', (req, res) => {
+app.get('/account/update/:name/:dob/:phone/:address/:csz', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
     res.send({error: 'Invalid token'});
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    dal.transaction(auth.authId, req.params.transaction, req.params.balance)
+    dal.update(auth.authId, req.params.name, req.params.dob, req.params.phone, req.params.address, req.params.csz)
       .then(user => {
         res.send(user);
       })
@@ -95,14 +94,54 @@ app.get('/account/update/transaction/:transaction/:balance', (req, res) => {
       });
   }
 })
-app.get('/account/update/image/:transId', (req, res) => {
+
+app.get('/account/transfer/:from/:to/:transaction/:fromBalance/:toBalance/:totBalance', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
     res.send({error: 'Invalid token'});
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    dal.image(auth.authId, req.params.transId)
+    dal.transaction(auth.authId, req.params.from, "Transfer", -Math.abs(parseFloat(req.params.transaction)), parseFloat(req.params.fromBalance), parseFloat(req.params.totBalance))
+      .then(user => {
+        dal.transaction(auth.authId, req.params.to, "Transfer", parseFloat(req.params.transaction), parseFloat(req.params.toBalance), parseFloat(req.params.totBalance))
+          .then(user => {
+            res.send(user);
+          })
+          .catch(err => {
+            res.send({error: err});
+          });
+      })
+      .catch(err => {
+        res.send({error: err});
+      });
+  }
+})
+app.get('/account/transaction/:type/:transaction/:actBalance/:totBalance', (req, res) => {
+  let auth = verifyToken(req);
+  if (auth===null) {
+    res.send({error: 'Invalid token'});
+  } else if (auth.error!==undefined) {
+    res.send({error: auth.error});
+  } else {
+    dal.transaction(auth.authId, auth.actId, req.params.type, parseFloat(req.params.transaction), parseFloat(req.params.actBalance), parseFloat(req.params.totBalance))
+      .then(user => {
+        res.send(user);
+      })
+      .catch(err => {
+        res.send({error: err});
+      });
+  }
+})
+
+app.get('/account/update/image/:actId/:transId', (req, res) => {
+  let auth = verifyToken(req);
+  if (auth===null) {
+    res.send({error: 'Invalid token'});
+  } else if (auth.error!==undefined) {
+    res.send({error: auth.error});
+  } else {
+    dal.image(auth.authId, req.params.actId,  req.params.transId)
       .then(user => {
         res.send(user);
       })
@@ -118,15 +157,14 @@ app.get('/account/login/:email/:password', (req, res) => {
       if (user.status === 'active') {
         if (decrypt(user.password) === atob(req.params.password)){
           let token = createToken({authId: user.authId, role: user.role});
-          user.token = token;
           if (user.failedAttempts > 0)
           {
             user.failedAttempts = 0;
             dal.updatefailedAttempts(user.authId, user.failedAttempts);
           }
+          user = {user, token: token};
           res.send(user);
-        }
-        else{
+        } else {
           user.failedAttempts = parseInt(user.failedAttempts)+1;
           dal.updatefailedAttempts(user.authId, user.failedAttempts);
           res.send({error: 'Login failed: wrong password'});
@@ -139,6 +177,17 @@ app.get('/account/login/:email/:password', (req, res) => {
       res.send({error: 'Login failed: user not found'});
     });
 });
+app.get('/account/createToken/:actId', (req, res) => {
+  let auth = verifyToken(req);
+  if (auth===null) {
+    res.send({error: 'Invalid token'});
+  } else if (auth.error!==undefined) {
+    res.send({error: auth.error});
+  } else {
+    let token = createToken({authId: auth.authId, role: auth.role, actId: req.params.actId});
+    res.send({token: token});
+  }
+});
 
 app.get('/account/status/:failedAttempts/:userId', (req, res) => {
   let auth = verifyToken(req);
@@ -147,7 +196,7 @@ app.get('/account/status/:failedAttempts/:userId', (req, res) => {
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    if (auth.role === 'admin') {
+    if (auth.role === 'employee') {
       dal.findAuth(req.params.userId)
         .then(user => {
           user.failedAttempts = req.params.failedAttempts;
@@ -164,7 +213,7 @@ app.get('/account/status/:failedAttempts/:userId', (req, res) => {
           res.send({error: err});
         });
       } else {
-        res.send({error: 'You are not an admin'});
+        res.send({error: 'You are not an employee'});
       }
     }
 })
@@ -189,7 +238,7 @@ app.get('/account/all/', (req, res) => {
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    if (auth.role!==undefined && auth.role==='admin') {
+    if (auth.role!==undefined && auth.role==='employee') {
       dal.all()
         .then(users => {
           users.map(user => {
@@ -201,7 +250,7 @@ app.get('/account/all/', (req, res) => {
           res.send({error: err});
         });
       } else {
-        res.send({error: 'You are not an admin'});
+        res.send({error: 'You are not an Employee'});
       }
     }
 })

@@ -46,23 +46,33 @@ It shows a full three tier application with authentication
 
 ## Files
 - **/Standalone** - Standalone React App
-  - **/dal.js** - Contains the connection, retrieval, and manipulation of data to Mongo
+  - **/api/dal.js** - Contains the connection, retrieval, and manipulation of data to Mongo
   - **/index.js** - Contains the apis from the client front end for CRUD
   - **/.env - not in repo, needs created (Variables Needed: MONGO_URL, ALGORITHM, SECRETKEY, EXPIRES, APIKEY, AUTHDOMAIN, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID, MEASUREMENTID, PORT)
-  - **/public/alldata.js** - Contains the React code to show the logged in users transactions or if admin, all users information
-  - **/public/bank.png** - Image/Logo of a bank
-  - **/public/background.png** - Background image of all pages
-  - **/public/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout including javascript defined styles
-  - **/public/createaccount.js** - Contains the React code to show the form to Create a new Account
+  - **/public/assets/css/styles.css** - Stylesheet file that positions objects, controls text, colors, and layout
+  - **/public/assets/images/background.png** - Background image of all pages
+  - **/public/assets/images/bank.png** - Image/Logo of a bank
+  - **/public/assets/images/Eoor.jpg** - Error image
+  - **/public/assets/images/Loading.png** - Loading Image
+  - **/public/assets/js/logic.js** - Contains most of the logi for login and validation
+  - **/public/components/alldata.js** - Contains the React code to show the logged in users transactions or if admin, all users information
+  - **/public/components/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout including javascript defined styles
+  - **/public/components/createaccount.js** - Contains the React code to show the form to Create a new Account
+  - **/public/components/home.js** - Contains the React code to show the home/welcome page
+  - **/public/components/login.js** - Contains the React code to show the login form
+  - **/public/components/navbar.js** - Contains the React code to create the navbar with proper routes
+  - **/public/components/transaction.js** - Contains the React code to allow the logged in user to deposit and/or withdraw from their account
   - **/public/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
-  - **/public/home.js** - Contains the React code to show the home/welcome page
   - **/public/index.html** - Start-up file to be opened by browser
   - **/public/index.js** - Contains the routing
-  - **/public/logic.js** - Contains most of the logi for login and validation
-  - **/public/login.js** - Contains the React code to show the login form
-  - **/public/navbar.js** - Contains the React code to create the navbar with proper routes
-  - **/public/styles.css** - Stylesheet file that positions objects, controls text, colors, and layout
-  - **/public/transaction.js** - Contains the React code to allow the logged in user to deposit and/or withdraw from their account
+  - **/schema/UserSchema.js** - Mongo Atlas Schema
+  - **/tests/jest.js** - Jest test to add a new user
+  - **/tests/puppetter.js** - Puppetter test to simulate login
+  - **/docker-compose.yml** - Yml file to create docker
+  - **/Dockefile** - Docker Image creation file
+  - **/index.js** - Contains the apis from the client front end for CRUD
+  - **/index.test.js** - Test start file
+  - **/.env - not in repo, needs created (Variables Needed: MONGO_URL, ALGORITHM, SECRETKEY, EXPIRES, APIKEY, AUTHDOMAIN, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID, MEASUREMENTID, PORT)
 - **/Create-React-App** - React App
   - **/public/bank.png** - Image/Logo of a bank
   - **/public/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark

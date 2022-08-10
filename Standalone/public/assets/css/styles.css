@@ -150,3 +150,13 @@ input:checked + .slider:before {
     width: 100%;
   }
 }
+
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  background: #dddddd !important;
+}
+.hidden {
+  display: none;
+  visibility: hidden;
+}

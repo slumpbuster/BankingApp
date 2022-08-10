@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 const testLogin = async () => {
   let browser = await puppeteer.launch({ headless: true });
   let page = await browser.newPage();
-  await page.goto('http://localhost:8080/#/login');
+  await page.goto('http://localhost:3000/#/login');
   await page.screenshot({ path: './loginBlank.png', fullPage: true });
   await page.waitForSelector('input[name=email]'); 
   //await page.$eval('input[name=email]', el => el.value = 'abel@mit.edu');

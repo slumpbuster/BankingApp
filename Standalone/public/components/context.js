@@ -1,6 +1,7 @@
 const Route       = ReactRouterDOM.Route;
 const Link        = ReactRouterDOM.Link;
 const HashRouter  = ReactRouterDOM.HashRouter;
+const UserContext = React.createContext();
 const maxWidth = "30rem";
 
 const cardClasses = (bgcolor, txtcolor) => {
@@ -99,32 +100,38 @@ const Form = (props) => {
       if (!validate(frmData[frmInput], frmInput)) rtn = false;
     });
     if (rtn) {
-      rtn = props.handle(frmData);
+      if (show===null) {
+        props.handle2();
+      } else {
+        rtn = props.handle(frmData);
+      }
     }
   }
 
-  const handleBtn = (e) => {props.func();}
-
   React.useEffect(() => {
+    let frm = document.getElementById("form")
+    if (frm!==null && frm!==undefined) frm.reset();
     let tmpFrmInputs = [];
     let tmpFrmData = {};
     props.elems.map((elem) => {
       if (elem.elem === "input") {
-        if (["input", "password", "number", "hidden"].includes(elem.type)) {
+        if (["text", "checkbox", "tel", "date", "password", "number", "hidden"].includes(elem.type)) {
           tmpFrmData[elem.name] = elem.value;
           tmpFrmInputs.push(elem.name);
         }
-      };
-      if (elem.elem === "button") {
-        if (elem.type !== "submit") {
+      } else {
+        if (elem.elem!=="button" && elem.elem!=="label") {
+          tmpFrmData[elem.name] = elem.value;
           tmpFrmInputs.push(elem.name);
         }
+      }
+      if (elem.elem === "button" && elem.type !== "submit") {
+        tmpFrmInputs.push(elem.name);
       }
     });
     setFrmInputs(tmpFrmInputs);
     setFrmData(tmpFrmData);
-  }, []);
-  
+  }, [props.elems]);  
   React.useEffect(() => {
     setShow(props.show);
     setStatus(props.status);
@@ -137,42 +144,63 @@ const Form = (props) => {
       txtcolor="dark"
       header={props.header}
       status={status}
-      body={show ? (
-        <form id="form" onSubmit={(e) => {onSubmit(e)}}>
-          {props.elems.map((elem, index) => (
-            <div key={`${elem.name}_${index}`}>
-              {elem.elem === "header" ? <h4>{elem.label}{elem.value}</h4> : <></>}
-              {elem.elem === "input" ?
-                (<>
-                  {elem.label ? <>{elem.label}<br/></> : <></>}
-                  {elem.type === "file"
-                    ? <><input type={elem.type} id={elem.name} name={elem.name} multiple/><br/></>
-                    : <input type={elem.type} step={(elem.step ? elem.step : "any")} className="form-control" name={elem.name} placeholder={(elem.holder ? elem.holder : "")} defaultValue={elem.value} autoFocus={elem.focus ? true :false} onChange={(e) => {onChange(e)}}/>
-                  }
-                  {elem.type != "hidden" && elem.type !== "file" ?
-                    (<>
-                      {errors[`${elem.name}`] && (<div className="text-warning warning">{errors[`${elem.name}`]}</div>)}
-                      <br/>
-                    </>):(<></>)
-                  }
-                </>):(<></>)
-              }
-              {elem.elem === "label" ?
-                (<>
-                  {elem.label ? <>{elem.label}<br/></> : <></>}
-                  <p id={elem.name}>{elem.value}</p>
-                  <br/>
-                </>):(<></>)
-              }
-              {elem.elem === "div" ?
-                (<div id={elem.name}>{elem.value}</div>):(<></>)
-              }
-            </div>
-          ))}
-          <br/>
-          <button id="frmSubmit" type="submit" className="btn btn-secondary" disabled={submit}>{(props.submit ? props.submit : props.header)}</button>
-        </form>
-        ):(
+      body={show || show===null ? (
+        <>
+          {show === null ? 
+            <h5 className="text-success">Success</h5>
+          : <></>}
+          <form id="form" onSubmit={(e) => {onSubmit(e)}}>
+            {props.elems.map((elem, index) => (
+              <div key={`${elem.name}_${index}`}>
+                {elem.elem === "header" ? <h4>{elem.label}{elem.value}</h4> : <></>}
+                {elem.elem === "input" && elem.type !== "hidden" ?
+                  (<>
+                    {elem.label && elem.type!=="checkbox" ? <>{elem.label}<br/></> : <></>}
+                    {elem.type === "file"
+                      ? <><input type={elem.type} id={elem.name} name={elem.name} multiple/><br/></>
+                      : (elem.type==="checkbox" ? <><input type={elem.type} name={elem.name} id={elem.name} autoFocus={elem.focus ? true : false} defaultValue={elem.value} onChange={(e) => {onChange(e)}}/> <label htmlFor={elem.name}>{elem.label}</label><br/></>
+                        : <><input type={elem.type} step={(elem.step ? elem.step : "any")} pattern={(elem.pattern ? elem.pattern : "[^]*")} className={`form-control ${elem.disabled ? "disabled" : ""}`} name={elem.name} placeholder={(elem.holder ? elem.holder : "")} defaultValue={elem.value} autoFocus={elem.focus ? true : false} onChange={(e) => {onChange(e)}}/></>)
+                    }
+                    {elem.type !== "hidden" && elem.type !== "file" ? 
+                      (<>
+                        {errors[`${elem.name}`] && (<div className="text-warning warning">{errors[`${elem.name}`]}</div>)}
+                        <br/>
+                      </>):(<></>)
+                    }
+                  </>):(<></>)
+                }
+                {elem.elem === "select" ?
+                  (<>
+                    {elem.label ? <>{elem.label}<br/></> : <></>}
+                    <select className="form-select" id={elem.name} name={elem.name} defaultValue={elem.value} autoFocus={elem.focus ? true : false} onChange={(e) => {onChange(e)}}>
+                      {elem.object === undefined ? elem.type
+                      : elem.object.map((obj, index) => (
+                        <option key={obj.id !== undefined ? obj.id : index} value={obj.value}>{obj.name}</option>
+                      ))}
+                    </select>
+                    <br/>
+                  </>) : (<></>)
+                }
+                {elem.elem === "label" ?
+                  (<>
+                    {elem.label ? <>{elem.label}<br/></> : <></>}
+                    <p id={elem.name}>{elem.value}</p>
+                    <br/>
+                  </>):(<></>)
+                }
+                {elem.elem === "div" ?
+                  (<div id={elem.name}>{elem.value}</div>):(<></>)
+                }
+              </div>
+            ))}
+            <br/>
+            {show ?
+              <button id="frmSubmit" type="submit" className="btn btn-secondary" disabled={submit}>{(props.submit ? props.submit : props.header)}</button>
+            : <>
+              <button id="frmClear" type="submit" className="btn btn-secondary">{props.success}</button>
+            </>}
+          </form>
+        </>) : (
           <>
           <h5 className="text-success">Success</h5>
           <button id="frmClear" className="btn btn-secondary" onClick={(e) => {clearForm(e)}}>{props.success}</button>
