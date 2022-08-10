@@ -1,0 +1,249 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0", 
+        "title": "MIT MERN Banking APP CRUD",
+        "description": "My Concert Project Application API",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "swaggermit.herokuapp.com",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "Users",
+            "description": "API for bank users in the system"
+        }
+    ],
+    "schemes": [
+        "https"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+
+    "paths": {
+        "/account/all": {
+            "get": {
+                "tags": ["Users"],
+                "description": "Get all Users in system",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/findOne/{email}": {
+            "get": {
+                "tags": ["Users"],
+                "description": "Get User by email",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "path",
+                        "required": true,
+                        "description": "Email of the user to be retrieved",
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/create/{authId}/{name}/{email}/{password}/{dob}/{phone}/{address}/{csz}/{savings}/{checking}": {
+            "get": {
+                "tags": ["Users"],
+                "description": "Create user",
+                "parameters": [
+                    {
+                        "name": "authId",
+                        "in": "path",
+                        "required": true,
+                        "description": "AuthID (firebase) of the user to be created or UUID for testing",
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "required": true,
+                        "description": "Name of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "path",
+                        "required": true,
+                        "description": "Email of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "path",
+                        "required": true,
+                        "description": "Password of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "dob",
+                        "in": "path",
+                        "required": true,
+                        "description": "Date of Birth of the user to be created",
+                        "type": "date"
+                    },
+                    {
+                        "name": "phone",
+                        "in": "path",
+                        "required": true,
+                        "description": "Phone Number of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "required": true,
+                        "description": "Address of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "csz",
+                        "in": "path",
+                        "required": true,
+                        "description": "City, State Zip of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "savings",
+                        "in": "path",
+                        "required": true,
+                        "description": "Whether the user has a savings account (1) or not (0)",
+                        "type": "number"
+                    },
+                    {
+                        "name": "checking",
+                        "in": "path",
+                        "required": true,
+                        "description": "Whether the user has a checking account (1) or not (0)",
+                        "type": "number"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "User": {
+            "required": ["authId","name","email","password","role"],
+            "properties": {
+                "authId": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "dob": {
+                    "type": "date"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "csz": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "balance": {
+                    "type": "number"
+                },
+                "accounts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": "array",
+                            "actId": {
+                                "type": "number"
+                            },
+                            "type": {
+                                "type": "number"
+                            },
+                            "balance": {
+                                "type": "number"
+                            },
+                            "transactions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "transId": {
+                                            "type": "string"
+                                        },
+                                        "date": {
+                                            "type": "date"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        },
+                                        "starting": {
+                                            "type": "number"
+                                        },
+                                        "transaction": {
+                                            "type": "number"
+                                        },
+                                        "ending": {
+                                            "type": "number"
+                                        },
+                                        "image": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
