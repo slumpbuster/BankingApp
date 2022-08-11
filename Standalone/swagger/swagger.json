@@ -517,12 +517,11 @@
                     "items": {
                         "type": "object",
                         "properties": {
-                            "type": "array",
                             "actId": {
-                                "type": "number"
+                                "type": "string"
                             },
                             "type": {
-                                "type": "number"
+                                "type": "string"
                             },
                             "balance": {
                                 "type": "number"
@@ -602,12 +601,11 @@
                     "items": {
                         "type": "object",
                         "properties": {
-                            "type": "array",
                             "actId": {
-                                "type": "number"
+                                "type": "string"
                             },
                             "type": {
-                                "type": "number"
+                                "type": "string"
                             },
                             "balance": {
                                 "type": "number"
