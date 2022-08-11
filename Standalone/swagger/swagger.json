@@ -32,6 +32,15 @@
             "get": {
                 "tags": ["Users"],
                 "description": "Get all Users in system",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with user id",
+                        "type": "string"
+                    }
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -55,7 +64,33 @@
                         "in": "path",
                         "required": true,
                         "description": "Email of the user to be retrieved",
-                        "type": "integer"
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UserCheck"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/findAuth": {
+            "get": {
+                "tags": ["Users"],
+                "description": "Get User by id",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with authorization",
+                        "type": "string"
                     }
                 ],
                 "produces": [
@@ -66,6 +101,72 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/login/{email}/{password}": {
+            "get": {
+                "tags": ["Users"],
+                "description": "Get User by login credentials and initial token (without account)",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "path",
+                        "required": true,
+                        "description": "Email of user",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "path",
+                        "required": true,
+                        "description": "Password of user",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UserWithToken"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/createToken/{actId}": {
+            "get": {
+                "tags": ["Token"],
+                "description": "User Account Token",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with authorization",
+                        "type": "string"
+                    },
+                    {
+                        "name": "actId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Account Id",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Token"
                         }
                     }
                 }
@@ -159,11 +260,311 @@
                     }
                 }
             }
+        },
+        "/account/update/{name}/{dob}/{phone}/{address}/{csz}": {
+            "get": {
+                "tags": ["Users"],
+                "description": "Update user",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with user id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "required": true,
+                        "description": "Name of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "dob",
+                        "in": "path",
+                        "required": true,
+                        "description": "Date of Birth of the user to be created",
+                        "type": "date"
+                    },
+                    {
+                        "name": "phone",
+                        "in": "path",
+                        "required": true,
+                        "description": "Phone Number of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "path",
+                        "required": true,
+                        "description": "Address of the user to be created",
+                        "type": "string"
+                    },
+                    {
+                        "name": "csz",
+                        "in": "path",
+                        "required": true,
+                        "description": "City, State Zip of the user to be created",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/transaction/{type}/{transaction}/{actBalance}/{totBalance}": {
+            "get": {
+                "tags": ["Transactions"],
+                "description": "Add Transaction (Deposit/Withdraw)",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with user id and account id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true,
+                        "description": "Transaction type (1 for deposit, -1 for withdraw)",
+                        "type": "number"
+                    },
+                    {
+                        "name": "transaction",
+                        "in": "path",
+                        "required": true,
+                        "description": "Transaction Ammount",
+                        "type": "number"
+                    },
+                    {
+                        "name": "actBalance",
+                        "in": "path",
+                        "required": true,
+                        "description": "Account Ending Balance",
+                        "type": "number"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/transfer/{from}/{to}/{transaction}/{fromBalance}/{toBalance}/{totBalance}": {
+            "get": {
+                "tags": ["Transactions"],
+                "description": "Add Transfer between two accounts",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with user id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "from",
+                        "in": "path",
+                        "required": true,
+                        "description": "Account where money is coming from",
+                        "type": "string"
+                    },
+                    {
+                        "name": "to",
+                        "in": "path",
+                        "required": true,
+                        "description": "Account where money is going to",
+                        "type": "string"
+                    },
+                    {
+                        "name": "transaction",
+                        "in": "path",
+                        "required": true,
+                        "description": "Transaction Ammount",
+                        "type": "number"
+                    },
+                    {
+                        "name": "fromBalance",
+                        "in": "path",
+                        "required": true,
+                        "description": "From Account Ending Balance",
+                        "type": "number"
+                    },
+                    {
+                        "name": "toBalance",
+                        "in": "path",
+                        "required": true,
+                        "description": "To Account Ending Balance",
+                        "type": "number"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/account/update/image/{transid}": {
+            "get": {
+                "tags": ["Transactions"],
+                "description": "Update Transaction with Image",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with user id and account id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "transId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Transaction id",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "UserCheck": {
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "Token": {
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "UserWithToken": {
+            "properties": {
+                "authId": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "dob": {
+                    "type": "date"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "csz": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "balance": {
+                    "type": "number"
+                },
+                "accounts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": "array",
+                            "actId": {
+                                "type": "number"
+                            },
+                            "type": {
+                                "type": "number"
+                            },
+                            "balance": {
+                                "type": "number"
+                            },
+                            "transactions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "transId": {
+                                            "type": "string"
+                                        },
+                                        "date": {
+                                            "type": "date"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        },
+                                        "starting": {
+                                            "type": "number"
+                                        },
+                                        "transaction": {
+                                            "type": "number"
+                                        },
+                                        "ending": {
+                                            "type": "number"
+                                        },
+                                        "image": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "User": {
-            "required": ["authId","name","email","password","role"],
             "properties": {
                 "authId": {
                     "type": "string",

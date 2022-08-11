@@ -5,17 +5,18 @@ const CreateAccount = (props) => {
   const [status, setStatus] = React.useState('');
   const [user, setUser] = React.useState(null);
   const {create} = props;
+  const [frmData, setFrmData] = React.useState({});
   const header = create ? "Create Account" : "Update Account";
   const elems = [
-    {elem:"input", type:"text", label:"Name", name:"name", holder:"Enter name", value:user!==null ? user.name : "", focus:true},
-    {elem:"input", type:"email", label:"Email address", name:"email", holder:"Enter email (Format name@domain.com)", pattern:"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$", value:user!==null ? user.email : "", disabled:!create},
-    {elem:"input", type:create ? "password" : "hidden", label:"Password", name:"password", holder:"Enter password (Minimum 8 charachters)", pattern:".{8,}", value:user!==null ? user.password : ""},
-    {elem:"input", type:"date", label:"Date of Birth", name:"dob", holder:"Enter date of birth", value:user!==null ? formatDate(user.dob) : ""},
-    {elem:"input", type:"tel", label:"Phone", name:"phone", holder:"Enter phone", holder:"Enter phone (Format: 123.456.7890)", pattern:"[0-9]{3}.[0-9]{3}.[0-9]{4}",  value:user!==null ? user.phone : ""},
-    {elem:"input", type:"text", label:"Street Address", name:"address", holder:"Enter street address", value:user!==null ? user.address : ""},
-    {elem:"input", type:"text", label:"City, State Zip", name:"csz", holder:"Enter city, state zip", value:user!==null ? user.csz : ""},
-    {elem:"input", type:create ? "checkbox" : "hidden", label:"Savings Account", name:"savings", value:user!==null && user.accounts!==undefined && user.accounts.filter(account => account.type === "Savings").length > 0 ? 1 : 0},
-    {elem:"input", type:create ? "checkbox" : "hidden", label:"Checking Account", name:"checking", value:user!==null && user.accounts!==undefined && user.accounts.filter(account => account.type === "Checking").length > 0 ? 1 : 0},
+    {elem:"input", type:"text", label:"Name", name:"name", holder:"Enter name", value:user!==null ? user.name : frmData.name !== undefined ? frmData.name : "", focus:true},
+    {elem:"input", type:"email", label:"Email address", name:"email", holder:"Enter email (Format name@domain.com)", pattern:"[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$", value:user!==null ? user.email : frmData.email !== undefined ? frmData.email : "", disabled:!create},
+    {elem:"input", type:create ? "password" : "hidden", label:"Password", name:"password", holder:"Enter password (Minimum 8 charachters)", pattern:".{8,}", value:user!==null ? user.password : frmData.password !== undefined ? frmData.password : ""},
+    {elem:"input", type:"date", label:"Date of Birth", name:"dob", holder:"Enter date of birth", value:user!==null ? formatDate(user.dob) : frmData.dob !== undefined ? formatDate(frmData.dob) : ""},
+    {elem:"input", type:"tel", label:"Phone", name:"phone", holder:"Enter phone", holder:"Enter phone (Format: 123.456.7890)", pattern:"[0-9]{3}.[0-9]{3}.[0-9]{4}",  value:user!==null ? user.phone : frmData.phone !== undefined ? frmData.phone : ""},
+    {elem:"input", type:"text", label:"Street Address", name:"address", holder:"Enter street address", value:user!==null ? user.address : frmData.address !== undefined ? frmData.address : ""},
+    {elem:"input", type:"text", label:"City, State Zip", name:"csz", holder:"Enter city, state zip", value:user!==null ? user.csz : frmData.csz !== undefined ? frmData.csz : ""},
+    {elem:"input", type:create ? "checkbox" : "hidden", label:"Savings Account", name:"savings", value:user!==null && user.accounts!==undefined && user.accounts.filter(account => account.type === "Savings").length > 0 ? 1 : frmData.savings !== undefined ? frmData.savings : 0},
+    {elem:"input", type:create ? "checkbox" : "hidden", label:"Checking Account", name:"checking", value:user!==null && user.accounts!==undefined && user.accounts.filter(account => account.type === "Checking").length > 0 ? 1 : frmData.checking !== undefined ? frmData.checking : 0},
     {elem:"input", type:"hidden", name:"balance", value:"0"}
   ]
   const urlHeader = {headers : {
@@ -50,42 +51,48 @@ const CreateAccount = (props) => {
   }, []);
 
   const clearForm = () => {
+    setFrmData({});
     setShow(true);
     loadData();
   }
 
   const handle = (data) => {
     setStatus('');
+    setFrmData(data);
     if (create) {
       if (parseInt(data.savings)===0 && parseInt(data.checking)===0) {
         setStatus('At least one account must be selected');
+        return;
       } else {
         fetch(`/account/findOne/${data.email}`)
           .then(response => response.json())
           .then(user => {
-            setStatus("Error: email already exists");
-        })
-        .catch(error => {
-          data.balance = data.balance.length === 0 ? 0 : parseFloat(data.balance);
-          data.transactions=[];
-          const auth = firebase.auth();
-          auth.createUserWithEmailAndPassword(data.email, data.password)
-            .then(user => {
-              setStatus('');
-              setShow(false);
-              fetch(`/account/create/${user.user.uid}/${data.name}/${data.email}/${data.password}/${data.dob.replaceAll('/', '-')}/${data.phone}/${data.address}/${data.csz}/${data.savings}/${data.checking}`, urlHeader)
-                .then(response => response.json())
-                .then(data => {
-                  setStatus('');
-                  setShow(false);
+            if (user.user !== undefined) {
+              setStatus("Error: email already exists");
+              return;
+            } else {
+              const auth = firebase.auth();
+              auth.createUserWithEmailAndPassword(data.email, data.password)
+                .then(user => {
+                  fetch(`/account/create/${user.user.uid}/${data.name}/${data.email}/${data.password}/${data.dob.replaceAll('/', '-')}/${data.phone}/${data.address}/${data.csz}/${data.savings}/${data.checking}`, urlHeader)
+                    .then(response => response.json())
+                    .then(respData => {
+                      setFrmData({});
+                      setShow(false);
+                    })
+                    .catch(error => {
+                      setStatus(error.message);
+                      return;
+                    });
                 })
                 .catch(error => {
                   setStatus(error.message);
+                  return;
                 });
-            })
-            .catch(error => {
-              setStatus(error.message);
-            });
+            }
+        })
+        .catch(error => {
+          setStatus("Error: account not created");
         });
       }
     } else {
@@ -97,6 +104,7 @@ const CreateAccount = (props) => {
         })
         .catch(error => {
           setStatus(error.message);
+          return;
         });
     }
   }
@@ -135,6 +143,7 @@ const CreateAccount = (props) => {
         show={show}
         status={status}
         elems={elems}
+        frmData={frmData}
       />
     )
   }

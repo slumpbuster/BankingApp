@@ -9,6 +9,7 @@ const Transaction = (props) => {
   const [account, setAccount] = React.useState(null);
   const header = parseInt(type)===1 ? "Deposit" : parseInt(type)===-1 ? "Withdraw" : "Transfer";
   const [elems, setElems] = React.useState([]);
+  const [frmData, setFrmData] = React.useState({});
   const urlHeader = {headers : {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -70,6 +71,7 @@ const Transaction = (props) => {
   }, [ctx]);
 
   const clearForm = () => {
+    setFrmData({});
     setShow(true);
     loadData();
   }
@@ -84,17 +86,20 @@ const Transaction = (props) => {
       const photo = file.files[0];
       ref.put(photo)
         .then(function(snapshot) {
-          fetch(`/account/update/image/${account.actId}/${transId}`, urlHeader)
+          fetch(`/account/update/image/${transId}`, urlHeader)
             .then(response => response.json())
             .then(data => {
+              setFrmData({});
               setShow(false);
             })
             .catch(error => {
               setStatus("Error uploading photo");
+              return;
             });
         })
         .catch(function(error) {
           setStatus("Error uploading photo");
+          return;
         });
     } else {
       setShow(false);
@@ -128,6 +133,7 @@ const Transaction = (props) => {
               })
               .catch(error => {
                 setStatus("Error transferring funds");
+                return;
               });
           }
         }
@@ -149,11 +155,13 @@ const Transaction = (props) => {
               let newTransaction = respData.accounts.filter(act => act.actId === account.actId)[0].transactions;
               checkImage(newTransaction[newTransaction.length-1].transId);
             } else {
+              setFrmData({});
               setShow(false);
             }
           })
           .catch(error => {
             setStatus("Transaction failed");
+            return;
           });
       }
       return;
@@ -195,6 +203,7 @@ const Transaction = (props) => {
         show={show}
         status={status}
         elems={elems}
+        frmData={frmData}
       />
     )
   }

@@ -134,14 +134,14 @@ app.get('/account/transaction/:type/:transaction/:actBalance/:totBalance', (req,
   }
 })
 
-app.get('/account/update/image/:actId/:transId', (req, res) => {
+app.get('/account/update/image/:transId', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
     res.send({error: 'Invalid token'});
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    dal.image(auth.authId, req.params.actId,  req.params.transId)
+    dal.image(auth.authId, auth.actId, req.params.transId)
       .then(user => {
         res.send(user);
       })
@@ -257,10 +257,10 @@ app.get('/account/all/', (req, res) => {
 app.get('/account/findOne/:email', (req, res) => {
   dal.findOne(req.params.email)
     .then(user => {
-      res.send(user);
+      res.send({user: user.email});
     })
     .catch(err => {
-      res.send({error: err});
+      res.send({error: 'user not found'});
     });
 })
 app.get('/account/findAuth/', (req, res) => {

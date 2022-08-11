@@ -131,7 +131,7 @@ const Form = (props) => {
     });
     setFrmInputs(tmpFrmInputs);
     setFrmData(tmpFrmData);
-  }, [props.elems]);  
+  }, [props.elems]);
   React.useEffect(() => {
     setShow(props.show);
     setStatus(props.status);
