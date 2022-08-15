@@ -1,7 +1,7 @@
 const loginRequired = ["deposit", "withdraw", "transaction", "editAccount"];
 const employeeRequired = ["allData"];
 
-fetch(`/config/firebaseConfig`)
+fetch(`/config/firebaseConfig`, {method: 'GET'})
   .then(response => response.json())
   .then(firebaseConfig => {
     firebase.initializeApp(firebaseConfig);
@@ -41,6 +41,7 @@ const checkLogin = (header) => {
 const userLoggedOff = () => {
   localStorage.removeItem("uToken");
   localStorage.removeItem("aToken");
+  ctx = null;
 }
 
 const invalid = (data) => {

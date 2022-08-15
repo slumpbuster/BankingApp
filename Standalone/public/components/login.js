@@ -22,7 +22,7 @@ const Login = (props) => {
     setData(null);
     setStatus('');
     userLoggedOff();
-    fetch(`/account/login/${data.email}/${btoa(data.password)}`)
+    fetch(`/account/login/${data.email}/${btoa(data.password)}`, {method: 'POST'})
       .then(response => response.json())
       .then(user => {
         if (user.error !== undefined) {
@@ -70,7 +70,7 @@ const Login = (props) => {
       'Accept': 'application/json',
       'Authorization': 'Bearer '+localStorage.getItem("aToken")
     }}
-    fetch(`/account/createToken/${document.getElementById("account").value}`, urlHeader)
+    fetch(`/account/createToken/${document.getElementById("account").value}`, {method: 'POST', headers: urlHeader.headers})
       .then(response => response.json())
       .then(token => {
         if (token.error !== undefined) {

@@ -26,7 +26,7 @@ const NavBar = (props) => {
   React.useEffect(() => {
     let token = localStorage.getItem("aToken");
     if (token !== null) {
-      fetch(`/account/findAuth/`, urlHeader)
+      fetch(`/account/findAuth/`, {method: 'GET', headers: urlHeader.headers})
         .then(response => response.json())
         .then(data => {
           if (!invalid(data)) {
@@ -62,7 +62,7 @@ const NavBar = (props) => {
   const onChange = (event) => {
     event.preventDefault();
     let tmpAccount = event.target.value;
-    fetch(`/account/createToken/${event.target.value}`, urlHeader)
+    fetch(`/account/createToken/${event.target.value}`, {method: 'POST', headers: urlHeader.headers})
       .then(response => response.json())
       .then(token => {
         setAccount(tmpAccount);
@@ -74,8 +74,8 @@ const NavBar = (props) => {
           localStorage.setItem('aToken',token.token);
         }
       })
-      .catch(error => {
-        console.log(error)
+      .catch(err => {
+        console.log(err)
       });
   }
   

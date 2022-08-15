@@ -38,13 +38,13 @@ const testCreateUser = () => {
   it('populate data', async () => {
     try {
       const url = `/account/create/${user.uid}/${user.name}/${user.email}/${user.password}/${user.dob}/${user.phone}/${user.streetaddress}/${user.citystatezip}/${user.savings}/${user.checking}`;
-      await request.get(url);
+      await request.post(url);
     } catch (error) {}
   })
   it('verify data', async () => {
     try {
-      const data = await request.get('/account/alldatatest/');
-      expect(data.body.some(e => e.name === user.name)).toBeTruthy();
+      const data = await request.get(`/account/findOne/${user.email}`);
+      expect(data.body.some(e => e.user === user.email)).toBeTruthy();
     } catch (error) {}
   })
 

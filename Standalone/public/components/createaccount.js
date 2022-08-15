@@ -27,7 +27,7 @@ const CreateAccount = (props) => {
   
   const loadData = () => {
     if (!create) {
-      fetch(`/account/findAuth/`, urlHeader)
+      fetch(`/account/findAuth/`, {method: 'GET', headers: urlHeader.headers})
         .then(response => response.json())
         .then(data => {
           setLoading(false);
@@ -64,7 +64,7 @@ const CreateAccount = (props) => {
         setStatus('At least one account must be selected');
         return;
       } else {
-        fetch(`/account/findOne/${data.email}`)
+        fetch(`/account/findOne/${data.email}`, {method: 'GET'})
           .then(response => response.json())
           .then(user => {
             if (user.user !== undefined) {
@@ -74,7 +74,7 @@ const CreateAccount = (props) => {
               const auth = firebase.auth();
               auth.createUserWithEmailAndPassword(data.email, data.password)
                 .then(user => {
-                  fetch(`/account/create/${user.user.uid}/${data.name}/${data.email}/${data.password}/${data.dob.replaceAll('/', '-')}/${data.phone}/${data.address}/${data.csz}/${data.savings}/${data.checking}`, urlHeader)
+                  fetch(`/account/create/${user.user.uid}/${data.name}/${data.email}/${data.password}/${data.dob.replaceAll('/', '-')}/${data.phone}/${data.address}/${data.csz}/${data.savings}/${data.checking}`, {method: 'POST'})
                     .then(response => response.json())
                     .then(respData => {
                       setFrmData({});
@@ -96,7 +96,7 @@ const CreateAccount = (props) => {
         });
       }
     } else {
-      fetch(`/account/update/${data.name}/${data.dob.replaceAll('/', '-')}/${data.phone}/${data.address}/${data.csz}`, urlHeader)
+      fetch(`/account/update/${data.name}/${data.dob.replaceAll('/', '-')}/${data.phone}/${data.address}/${data.csz}`, {method: 'PUT', headers: urlHeader.headers})
         .then(response => response.json())
         .then(data => {
           setStatus('');

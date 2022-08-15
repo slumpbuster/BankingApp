@@ -20,6 +20,9 @@ const firebaseConfig = {
   measurementId: process.env.MEASUREMENTID
 };
 
+app.use(express.static('public'));
+app.use(cors());
+
 const createToken = (data) => {
   try {
     return jwt.sign(data, secretKey, { expiresIn: expires });
@@ -29,9 +32,9 @@ const createToken = (data) => {
   return null;
 }
 const verifyToken = (req) => {
-  let token = null;
-  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-    token = req.headers.authorization.split(' ')[1];
+  let token = req.headers.authorization ? req.headers.authorization : null;
+  if (token !==null && token.split(' ')[0] === 'Bearer') {
+    token = token.split(' ')[1];
   }
   if (token != null) {
     try {
@@ -49,9 +52,6 @@ const verifyToken = (req) => {
   return null;
 }
 
-app.use(express.static('public'));
-app.use(cors());
-
 const encrypt = (text) => {    
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
@@ -61,7 +61,6 @@ const encrypt = (text) => {
       content: encrypted.toString('hex')
   }));
 };
-
 const decrypt = (hash) => {
   hash=JSON.parse(atob(hash));
   const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, 'hex'));
@@ -69,8 +68,12 @@ const decrypt = (hash) => {
   return decrpyted.toString();
 };
 
-app.get('/account/create/:authId/:name/:email/:password/:dob/:phone/:address/:csz/:savings/:checking', (req, res) => {
-  dal.create(req.params.authId, req.params.name, req.params.email, encrypt(req.params.password), req.params.dob, req.params.phone, req.params.address, req.params.csz, req.params.savings, req.params.checking)
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./swagger/swagger.json');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.post('/account/create/:authId/:name/:email/:password/:dob/:phone/:address/:csz/:savings/:checking', (req, res) => {
+  dal.createUser(req.params.authId, req.params.name, req.params.email, encrypt(req.params.password), req.params.dob, req.params.phone, req.params.address, req.params.csz, req.params.savings, req.params.checking)
     .then(user => {
       res.send(user);
     })
@@ -78,14 +81,14 @@ app.get('/account/create/:authId/:name/:email/:password/:dob/:phone/:address/:cs
       res.send({error: err});
     });
 })
-app.get('/account/update/:name/:dob/:phone/:address/:csz', (req, res) => {
+app.put('/account/update/:name/:dob/:phone/:address/:csz', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
     res.send({error: 'Invalid token'});
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    dal.update(auth.authId, req.params.name, req.params.dob, req.params.phone, req.params.address, req.params.csz)
+    dal.updateUser(auth.authId, req.params.name, req.params.dob, req.params.phone, req.params.address, req.params.csz)
       .then(user => {
         res.send(user);
       })
@@ -94,17 +97,65 @@ app.get('/account/update/:name/:dob/:phone/:address/:csz', (req, res) => {
       });
   }
 })
-
-app.get('/account/transfer/:from/:to/:transaction/:fromBalance/:toBalance/:totBalance', (req, res) => {
+app.delete('/account/delete/:authId', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
     res.send({error: 'Invalid token'});
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    dal.transaction(auth.authId, req.params.from, "Transfer", -Math.abs(parseFloat(req.params.transaction)), parseFloat(req.params.fromBalance), parseFloat(req.params.totBalance))
+    if (auth.role === 'employee') {
+      dal.deleteUser(req.params.authId)
+        .then(user => {
+          res.send(user);
+        })
+        .catch(err => {
+          res.send({error: err});
+        });
+    } else {
+      res.send({error: 'You are not an employee'});
+    }
+  }
+})
+app.put('/account/status/:failedAttempts/:userId', (req, res) => {
+  let auth = verifyToken(req);
+  if (auth===null) {
+    res.send({error: 'Invalid token'});
+  } else if (auth.error!==undefined) {
+    res.send({error: auth.error});
+  } else {
+    if (auth.role === 'employee') {
+      dal.findAuthUser(req.params.userId)
+        .then(user => {
+          user.failedAttempts = req.params.failedAttempts;
+          user.status = req.params.failedAttempts===0 ? 'active' : 'disabled';
+          dal.updatefailedAttempts(user.authId, user.failedAttempts)
+          .then(update => {
+            res.send(user);
+          })
+          .catch(err => {
+            res.send({error: err});
+          });
+        })
+        .catch(err => {
+          res.send({error: err});
+        });
+      } else {
+        res.send({error: 'You are not an employee'});
+      }
+    }
+})
+
+app.post('/account/transfer/:from/:to/:transaction/:fromBalance/:toBalance/:totBalance', (req, res) => {
+  let auth = verifyToken(req);
+  if (auth===null) {
+    res.send({error: 'Invalid token'});
+  } else if (auth.error!==undefined) {
+    res.send({error: auth.error});
+  } else {
+    dal.createTransaction(auth.authId, req.params.from, "Transfer", -Math.abs(parseFloat(req.params.transaction)), parseFloat(req.params.fromBalance), parseFloat(req.params.totBalance))
       .then(user => {
-        dal.transaction(auth.authId, req.params.to, "Transfer", parseFloat(req.params.transaction), parseFloat(req.params.toBalance), parseFloat(req.params.totBalance))
+        dal.createTransaction(auth.authId, req.params.to, "Transfer", parseFloat(req.params.transaction), parseFloat(req.params.toBalance), parseFloat(req.params.totBalance))
           .then(user => {
             res.send(user);
           })
@@ -117,14 +168,30 @@ app.get('/account/transfer/:from/:to/:transaction/:fromBalance/:toBalance/:totBa
       });
   }
 })
-app.get('/account/transaction/:type/:transaction/:actBalance/:totBalance', (req, res) => {
+app.post('/account/transaction/:type/:transaction/:actBalance/:totBalance', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
     res.send({error: 'Invalid token'});
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    dal.transaction(auth.authId, auth.actId, req.params.type, parseFloat(req.params.transaction), parseFloat(req.params.actBalance), parseFloat(req.params.totBalance))
+    dal.createTransaction(auth.authId, auth.actId, req.params.type, parseFloat(req.params.transaction), parseFloat(req.params.actBalance), parseFloat(req.params.totBalance))
+      .then(user => {
+        res.send(user);
+      })
+      .catch(err => {
+        res.send({error: err});
+      });
+  }
+})
+app.put('/account/update/image/:transId', (req, res) => {
+  let auth = verifyToken(req);
+  if (auth===null) {
+    res.send({error: 'Invalid token'});
+  } else if (auth.error!==undefined) {
+    res.send({error: auth.error});
+  } else {
+    dal.updateImage(auth.authId, auth.actId, req.params.transId)
       .then(user => {
         res.send(user);
       })
@@ -134,28 +201,11 @@ app.get('/account/transaction/:type/:transaction/:actBalance/:totBalance', (req,
   }
 })
 
-app.get('/account/update/image/:transId', (req, res) => {
-  let auth = verifyToken(req);
-  if (auth===null) {
-    res.send({error: 'Invalid token'});
-  } else if (auth.error!==undefined) {
-    res.send({error: auth.error});
-  } else {
-    dal.image(auth.authId, auth.actId, req.params.transId)
-      .then(user => {
-        res.send(user);
-      })
-      .catch(err => {
-        res.send({error: err});
-      });
-  }
-})
-
-app.get('/account/login/:email/:password', (req, res) => {
-  dal.findOne(req.params.email)
+app.post('/account/login/:email/:password', (req, res) => {
+  dal.findOneUser(req.params.email)
     .then(user => {
       if (user.status === 'active') {
-        if (decrypt(user.password) === atob(req.params.password)){
+        if ((decrypt(user.password) === atob(req.params.password)) || (decrypt(user.password) === req.params.password)) {
           let token = createToken({authId: user.authId, role: user.role});
           if (user.failedAttempts > 0)
           {
@@ -177,7 +227,7 @@ app.get('/account/login/:email/:password', (req, res) => {
       res.send({error: 'Login failed: user not found'});
     });
 });
-app.get('/account/createToken/:actId', (req, res) => {
+app.post('/account/createToken/:actId', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
     res.send({error: 'Invalid token'});
@@ -189,48 +239,6 @@ app.get('/account/createToken/:actId', (req, res) => {
   }
 });
 
-app.get('/account/status/:failedAttempts/:userId', (req, res) => {
-  let auth = verifyToken(req);
-  if (auth===null) {
-    res.send({error: 'Invalid token'});
-  } else if (auth.error!==undefined) {
-    res.send({error: auth.error});
-  } else {
-    if (auth.role === 'employee') {
-      dal.findAuth(req.params.userId)
-        .then(user => {
-          user.failedAttempts = req.params.failedAttempts;
-          user.status = req.params.failedAttempts===0 ? 'active' : 'disabled';
-          dal.updatefailedAttempts(user.authId, user.failedAttempts)
-          .then(update => {
-            res.send(user);
-          })
-          .catch(err => {
-            res.send({error: err});
-          });
-        })
-        .catch(err => {
-          res.send({error: err});
-        });
-      } else {
-        res.send({error: 'You are not an employee'});
-      }
-    }
-})
-
-app.get('/account/alldatatest/', (req, res) => {
-  dal.all()
-    .then(users => {
-      users.map(user => {
-        user.password = decrypt(user.password);
-      });
-      res.send(users);
-    })
-    .catch(err => {
-      res.send({error: err});
-    });
-})
-
 app.get('/account/all/', (req, res) => {
   let auth = verifyToken(req);
   if (auth===null) {
@@ -239,7 +247,7 @@ app.get('/account/all/', (req, res) => {
     res.send({error: auth.error});
   } else {
     if (auth.role!==undefined && auth.role==='employee') {
-      dal.all()
+      dal.allUsers()
         .then(users => {
           users.map(user => {
             user.password = decrypt(user.password);
@@ -255,7 +263,7 @@ app.get('/account/all/', (req, res) => {
     }
 })
 app.get('/account/findOne/:email', (req, res) => {
-  dal.findOne(req.params.email)
+  dal.findOneUser(req.params.email)
     .then(user => {
       res.send({user: user.email});
     })
@@ -270,7 +278,7 @@ app.get('/account/findAuth/', (req, res) => {
   } else if (auth.error!==undefined) {
     res.send({error: auth.error});
   } else {
-    dal.findAuth(auth.authId)
+    dal.findAuthUser(auth.authId)
       .then(user => {
         res.send(user);
       })

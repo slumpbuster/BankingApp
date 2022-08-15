@@ -7,8 +7,7 @@
   "scripts": {
     "npm i": "npm i",
     "test": "jest",
-    "start": "nodemon index.js",
-    "dev": "nodemon index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "dependencies": {
@@ -25,6 +24,8 @@
     "nodemon": "^2.0.19",
     "puppeteer": "^16.0.0",
     "supertest": "^6.2.4",
+    "swagger": "^0.0.1",
+    "swagger-ui-express": "^4.5.0",
     "uuidv4": "^6.2.13"
   }
 }

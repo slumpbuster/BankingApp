@@ -19,7 +19,7 @@ const AllData = () => {
   }}
 
   React.useEffect(() => {
-    fetch(`/account/findAuth/`, urlHeader)
+    fetch(`/account/findAuth/`, {method: 'GET', headers: urlHeader.headers})
       .then(response => response.json())
       .then(data => {
         if (!invalid(data)) {
@@ -29,7 +29,7 @@ const AllData = () => {
             setHeader("All Users Data");
             setHeaders(["authId", "name", "email", "password", "status", "balance"]);
             setTransactions(["transId", "date", "type", "starting", "transaction", "ending", "image"]);
-            fetch(`/account/all/`, urlHeader)
+            fetch(`/account/all/`, {method: 'GET', headers: urlHeader.headers})
               .then(response => response.json())
               .then(data => {
                 if (!invalid(data)) {
@@ -118,8 +118,8 @@ const AllData = () => {
         }
         modalImgDisplay(url, display());
       })
-      .catch(function(error){
-        console.log(error)
+      .catch(function(err){
+        console.log(err)
       });
   }
   const enableUer = (e, authId, curStatus) => {
@@ -127,7 +127,7 @@ const AllData = () => {
     let filter = [...allUsers].filter((flt) => flt.authId===authId);
     var proceed = confirm(`Are you sure you want to change ${filter[0].name} account's status to ${e.target.value}?`);
     if (proceed) {
-      fetch(`/account/status/${e.target.value==="active" ? 0 : 6}/${authId}`, urlHeader)
+      fetch(`/account/status/${e.target.value==="active" ? 0 : 6}/${authId}`, {method: 'PUT', headers: urlHeader.headers})
         .then(response => response.json())
         .then(data => {
           if (!invalid(data)) {

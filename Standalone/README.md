@@ -3,8 +3,7 @@
 
 ## Description 
 There are two Applications in this Repo:
-1) Create-React-App -> This is a simple Banking Application without security/auth using react and a local json file to create and manage global state.
-2) Standalone -> This is a more complex Banking Application with security/auth using react and connecting to a Mongo DB to create and manage data. Includes Jest and Puppeteer Testing and Swagger API documentation.
+Complex Banking Application with security/auth using react and connecting to a Mongo DB to create and manage data. Includes Jest and Puppeteer Testing and Swagger API documentation.
 
 ## Purpose 
 This was done as an assignment in the MIT course - Full Stack Development with Mern
@@ -32,10 +31,6 @@ It shows a full three tier application with authentication
 - If GtHub Desktop isn't installed you will be prompted to download and then install, if installed GitHub Desktop will open with an option to Clone a Repository. Click the Clone button.
 - Open a command line on your computer and run the command cd path-to-project-root (this should be the actual directory where the repository is located on your local machine)
 - Within the same command-line window, run npm install which will install the necessary dependencies
-1) Create-React-App
-- Once the command completes successfully, run npm run start
-- Your browser will open to the default application page
-2) Standalone
 - Need to have a firebase account and setup both Auth and Storage and add config info in .env
 - Once the command completes successfully, run npm run start
 - Open your browser of choice and browse to http://127.0.0.1:3000/
@@ -49,7 +44,6 @@ It shows a full three tier application with authentication
 ---------
 
 ## Files
-- **/Standalone** - Standalone React App
   - **/api/dal.js** - Contains the connection, retrieval, and manipulation of data to Mongo
   - **/index.js** - Contains the apis from the client front end for CRUD
   - **/.env - not in repo, needs created (Variables Needed: MONGO_URL, ALGORITHM, SECRETKEY, EXPIRES, APIKEY, AUTHDOMAIN, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID, MEASUREMENTID, PORT)
@@ -79,25 +73,6 @@ It shows a full three tier application with authentication
   - **/index.test.js** - Test start file
   - **/.env - not in repo, needs created (Variables Needed: MONGO_URL, ALGORITHM, SECRETKEY, EXPIRES, APIKEY, AUTHDOMAIN, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID, MEASUREMENTID, PORT)
   - **/MERN-Banking.png** - App Diagram
-- **/Create-React-App** - React App
-  - **/public/bank.png** - Image/Logo of a bank
-  - **/public/favicon.ico** - Icon to be used if saved as a Favorite/Bookmark
-  - **/public/index.html** - Start-up file to be opened by browser
-  - **/public/users.json** - Contains the starting data (list of users/accounts)
-  - **/src/App.css** - Stylesheet file that positions objects, controls text, colors, and layout
-  - **/src/App.js** - Contains the routing and UserContext Global state
-  - **/src/index.css** - Stylesheet file that positions objects, controls text, colors, and layo
-  - **/src/index.js** - Contains the ReactDom
-  - **/src/alldata.js** - Contains the React code to show the data stored in Global State
-  - **/src/Components/context.js** - Contains the main React code to show the various pages as well as the code to standardize the layout
-  - **/src/Components/createaccount.js** - Contains the React code to show the form to Create a new Account
-  - **/src/Components/deposit.js** - Contains the React code to allow the logged in user to deposit into their account
-  - **/src/Components/home.js** - Contains the React code to show the home/welcome page
-  - **/src/Components/login.js** - Contains the React code to show the login form
-  - **/src/Components/navbar.js** - Contains the React code to create the navbar with proper routes
-  - **/src/Components/withdraw.js** - Contains the React code to allow the logged in user to withdraw from their account
-  - **/src/Middleware/logic.js** - Contains most of the logi for login and validation
-  - **/src/Middleware/styles.js** - Contains the javascript defined styles
 
 ---------
 

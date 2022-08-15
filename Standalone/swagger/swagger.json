@@ -9,7 +9,7 @@
             "url": "https://opensource.org/licenses/MIT"
         }
     },
-    "host": "swaggermit.herokuapp.com",
+    "host": "dustin-sellersfsbankingapp.herokuapp.com",
     "basePath": "/",
     "tags": [
         {
@@ -107,7 +107,7 @@
             }
         },
         "/account/login/{email}/{password}": {
-            "get": {
+            "post": {
                 "tags": ["Users"],
                 "description": "Get User by login credentials and initial token (without account)",
                 "parameters": [
@@ -140,7 +140,7 @@
             }
         },
         "/account/createToken/{actId}": {
-            "get": {
+            "post": {
                 "tags": ["Token"],
                 "description": "User Account Token",
                 "parameters": [
@@ -173,7 +173,7 @@
             }
         },
         "/account/create/{authId}/{name}/{email}/{password}/{dob}/{phone}/{address}/{csz}/{savings}/{checking}": {
-            "get": {
+            "post": {
                 "tags": ["Users"],
                 "description": "Create user",
                 "parameters": [
@@ -196,7 +196,8 @@
                         "in": "path",
                         "required": true,
                         "description": "Email of the user to be created",
-                        "type": "string"
+                        "type": "string",
+                        "format": "email"
                     },
                     {
                         "name": "password",
@@ -209,15 +210,17 @@
                         "name": "dob",
                         "in": "path",
                         "required": true,
-                        "description": "Date of Birth of the user to be created",
-                        "type": "date"
+                        "description": "Date of Birth of the user to be created (Format: YYYY-MM-DD)",
+                        "type": "string",
+                        "format": "date"
                     },
                     {
                         "name": "phone",
                         "in": "path",
                         "required": true,
-                        "description": "Phone Number of the user to be created",
-                        "type": "string"
+                        "description": "Phone Number of the user to be created (Format: XXX.XXX.XXXX)",
+                        "type": "string",
+                        "format": "phone"
                     },
                     {
                         "name": "address",
@@ -230,7 +233,7 @@
                         "name": "csz",
                         "in": "path",
                         "required": true,
-                        "description": "City, State Zip of the user to be created",
+                        "description": "City, State Zip of the user to be created (Format: City, State Zip)",
                         "type": "string"
                     },
                     {
@@ -238,14 +241,16 @@
                         "in": "path",
                         "required": true,
                         "description": "Whether the user has a savings account (1) or not (0)",
-                        "type": "number"
+                        "type": "number",
+                        "default": 0
                     },
                     {
                         "name": "checking",
                         "in": "path",
                         "required": true,
                         "description": "Whether the user has a checking account (1) or not (0)",
-                        "type": "number"
+                        "type": "number",
+                        "default": 0
                     }
                 ],
                 "produces": [
@@ -262,7 +267,7 @@
             }
         },
         "/account/update/{name}/{dob}/{phone}/{address}/{csz}": {
-            "get": {
+            "put": {
                 "tags": ["Users"],
                 "description": "Update user",
                 "parameters": [
@@ -322,8 +327,41 @@
                 }
             }
         },
+        "/account/delete/{authId}": {
+            "delete": {
+                "tags": ["Users"],
+                "description": "Delete user",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "description": "Token with user id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "authId",
+                        "in": "path",
+                        "required": true,
+                        "description": "User AuthId (firebase) or UUID for testing",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
         "/account/transaction/{type}/{transaction}/{actBalance}/{totBalance}": {
-            "get": {
+            "post": {
                 "tags": ["Transactions"],
                 "description": "Add Transaction (Deposit/Withdraw)",
                 "parameters": [
@@ -370,7 +408,7 @@
             }
         },
         "/account/transfer/{from}/{to}/{transaction}/{fromBalance}/{toBalance}/{totBalance}": {
-            "get": {
+            "post": {
                 "tags": ["Transactions"],
                 "description": "Add Transfer between two accounts",
                 "parameters": [
@@ -431,7 +469,7 @@
             }
         },
         "/account/update/image/{transid}": {
-            "get": {
+            "put": {
                 "tags": ["Transactions"],
                 "description": "Update Transaction with Image",
                 "parameters": [

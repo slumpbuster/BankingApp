@@ -17,7 +17,7 @@ const Transaction = (props) => {
   }}
   
   const loadData = () => {
-    fetch(`/account/findAuth/`, urlHeader)
+    fetch(`/account/findAuth/`, {method: 'GET', headers: urlHeader.headers})
       .then(response => response.json())
       .then(data => {
         setLoading(false);
@@ -86,7 +86,7 @@ const Transaction = (props) => {
       const photo = file.files[0];
       ref.put(photo)
         .then(function(snapshot) {
-          fetch(`/account/update/image/${transId}`, urlHeader)
+          fetch(`/account/update/image/${transId}`, {method: 'PUT', headers: urlHeader.headers})
             .then(response => response.json())
             .then(data => {
               setFrmData({});
@@ -124,7 +124,7 @@ const Transaction = (props) => {
             setStatus("Transaction Failed: amount cannot exceed balance");
             return;
           } else {
-            fetch(`/account/transfer/${data.from}/${data.to}/${transaction}/${newFromBalance}/${newToBalance}/${newTotalBalance}`, urlHeader)
+            fetch(`/account/transfer/${data.from}/${data.to}/${transaction}/${newFromBalance}/${newToBalance}/${newTotalBalance}`, {method: 'POST', headers: urlHeader.headers})
               .then(response => response.json())
               .then(respData => {
                 setUser(respData);
@@ -146,7 +146,7 @@ const Transaction = (props) => {
           setStatus("Transaction Failed: amount cannot exceed balance");
           return;
         }
-        fetch(`/account/transaction/${type===1 ? "Deposit" : type===-1 ? "Withdraw" : "Unknown"}/${transaction}/${newActBalance}/${newTotalBalance}`, urlHeader)
+        fetch(`/account/transaction/${type===1 ? "Deposit" : type===-1 ? "Withdraw" : "Unknown"}/${transaction}/${newActBalance}/${newTotalBalance}`, {method: 'POST', headers: urlHeader.headers})
           .then(response => response.json())
           .then(respData => {
             setUser(respData);
