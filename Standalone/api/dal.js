@@ -20,8 +20,8 @@ const createUser = (authId, name, email, password, dob, phone, address, csz, sav
   return new Promise((resolve, reject) => {
     try {
       let accounts = [];
-      if (parseInt(savings)===1) accounts.push({actId: uuid_v4(), type: 'Savings', balance: savings, transactions: []});
-      if (parseInt(checking)===1) accounts.push({actId: uuid_v4(), type: 'Checking', balance: checking, transactions: []});
+      if (parseInt(savings)===1) accounts.push({actId: uuid_v4(), type: 'Savings', balance: 0, transactions: []});
+      if (parseInt(checking)===1) accounts.push({actId: uuid_v4(), type: 'Checking', balance: 0, transactions: []});
       const user = new User({authId, name, email, password, dob: dob, phone: phone, address: address, csz: csz, accounts: accounts});
       user.save()
         .then((docs) => resolve(docs))
