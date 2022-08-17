@@ -7,7 +7,7 @@ const Spa = () => {
       <React.Fragment>
         <UserContext.Provider value={data}>
           <NavBar setData={setData} />
-            <div className="container" style={{padding: "20px"}}>
+            <div className="container containerOverride" style={{padding: "20px"}}>
               <Route path="/" exact component={Home} />
               <Route path="/createAccount/" render={(props) => <CreateAccount create={true} />} />
               <Route path="/editAccount/" render={(props) => <CreateAccount create={false} />} />
